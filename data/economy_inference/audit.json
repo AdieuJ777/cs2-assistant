@@ -1,0 +1,38 @@
+{
+  "rows": 664,
+  "matches": 33,
+  "label_distribution": {
+    "long_gun": 315,
+    "half_buy": 244,
+    "eco": 73,
+    "pistol": 32
+  },
+  "majority_share": 0.4743975903614458,
+  "splits": {
+    "train": 463,
+    "test": 111,
+    "val": 90
+  },
+  "features_categorical": [
+    "prev_t_econ_type",
+    "prev_ct_econ_type",
+    "prev_winner_side",
+    "prev_round_winner_side",
+    "prev_round_attack_site",
+    "round_phase"
+  ],
+  "features_numeric": [
+    "round_num",
+    "score_diff_ct_minus_t_before",
+    "ct_team_score_before",
+    "t_team_score_before",
+    "prev_score_diff",
+    "prev_t_total_equip",
+    "prev_ct_total_equip",
+    "t_loss_streak_before",
+    "ct_loss_streak_before",
+    "pistol_round_flag"
+  ],
+  "label": "t_econ_type",
+  "note": "Pre-round observable features only. The current round's T economy, T positions, per-player money, weapons and utility are not available in the released TAGNet dataset."
+}

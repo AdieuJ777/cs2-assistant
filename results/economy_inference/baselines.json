@@ -1,0 +1,235 @@
+{
+  "audit": {
+    "rows": 664,
+    "matches": 33,
+    "label_distribution": {
+      "long_gun": 315,
+      "half_buy": 244,
+      "eco": 73,
+      "pistol": 32
+    },
+    "majority_share": 0.4743975903614458,
+    "splits": {
+      "train": 463,
+      "test": 111,
+      "val": 90
+    },
+    "features_categorical": [
+      "prev_t_econ_type",
+      "prev_ct_econ_type",
+      "prev_winner_side",
+      "prev_round_winner_side",
+      "prev_round_attack_site",
+      "round_phase"
+    ],
+    "features_numeric": [
+      "round_num",
+      "score_diff_ct_minus_t_before",
+      "ct_team_score_before",
+      "t_team_score_before",
+      "prev_score_diff",
+      "prev_t_total_equip",
+      "prev_ct_total_equip",
+      "t_loss_streak_before",
+      "ct_loss_streak_before",
+      "pistol_round_flag"
+    ],
+    "label": "t_econ_type",
+    "note": "Pre-round observable features only. The current round's T economy, T positions, per-player money, weapons and utility are not available in the released TAGNet dataset."
+  },
+  "classifiers": [
+    {
+      "name": "hand_rule",
+      "accuracy": 0.5512048192771084,
+      "macro_f1": 0.5617657172571122,
+      "per_class_recall": {
+        "eco": 0.1232876712328767,
+        "half_buy": 0.4180327868852459,
+        "long_gun": 0.707936507936508,
+        "pistol": 1.0
+      },
+      "confusion_matrix": [
+        [
+          9,
+          64,
+          0,
+          0
+        ],
+        [
+          40,
+          102,
+          102,
+          0
+        ],
+        [
+          16,
+          76,
+          223,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          32
+        ]
+      ]
+    },
+    {
+      "name": "majority",
+      "accuracy": 0.4743975903614458,
+      "macro_f1": 0.16087844739530133,
+      "per_class_recall": {
+        "eco": 0.0,
+        "half_buy": 0.0,
+        "long_gun": 1.0,
+        "pistol": 0.0
+      },
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          73,
+          0
+        ],
+        [
+          0,
+          0,
+          244,
+          0
+        ],
+        [
+          0,
+          0,
+          315,
+          0
+        ],
+        [
+          0,
+          0,
+          32,
+          0
+        ]
+      ],
+      "brier_score": 1.0512048192771084
+    },
+    {
+      "name": "tree_depth3",
+      "accuracy": 0.6927710843373494,
+      "macro_f1": 0.5747067958334735,
+      "per_class_recall": {
+        "eco": 0.0,
+        "half_buy": 0.7254098360655737,
+        "long_gun": 0.8222222222222222,
+        "pistol": 0.75
+      },
+      "confusion_matrix": [
+        [
+          0,
+          64,
+          9,
+          0
+        ],
+        [
+          0,
+          177,
+          67,
+          0
+        ],
+        [
+          0,
+          56,
+          259,
+          0
+        ],
+        [
+          0,
+          7,
+          1,
+          24
+        ]
+      ],
+      "brier_score": 0.42343155568775154
+    },
+    {
+      "name": "tree_depth6",
+      "accuracy": 0.7439759036144579,
+      "macro_f1": 0.7396452013295653,
+      "per_class_recall": {
+        "eco": 0.589041095890411,
+        "half_buy": 0.6639344262295082,
+        "long_gun": 0.8317460317460318,
+        "pistol": 0.84375
+      },
+      "confusion_matrix": [
+        [
+          43,
+          28,
+          2,
+          0
+        ],
+        [
+          37,
+          162,
+          45,
+          0
+        ],
+        [
+          8,
+          45,
+          262,
+          0
+        ],
+        [
+          0,
+          5,
+          0,
+          27
+        ]
+      ],
+      "brier_score": 0.3854259933889034
+    },
+    {
+      "name": "random_forest",
+      "accuracy": 0.7349397590361446,
+      "macro_f1": 0.7021221310136404,
+      "per_class_recall": {
+        "eco": 0.2191780821917808,
+        "half_buy": 0.7336065573770492,
+        "long_gun": 0.8285714285714286,
+        "pistol": 1.0
+      },
+      "confusion_matrix": [
+        [
+          16,
+          54,
+          3,
+          0
+        ],
+        [
+          14,
+          179,
+          51,
+          0
+        ],
+        [
+          3,
+          51,
+          261,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          32
+        ]
+      ],
+      "brier_score": 0.3326489859681999
+    }
+  ],
+  "regression": {
+    "t_total_equip_mae": 3001.235467690716,
+    "t_total_equip_mean": 20984.713855421687
+  }
+}
