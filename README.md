@@ -137,9 +137,29 @@ never abstained. 19% of its recommended rationales asserted enemy intent
 unknown. On the natural 92%-HOLD distribution, this behavior would be
 catastrophic.
 
-**Conclusion:** the LLM should not select actions. The structured team state
-already contains the signal; the random forest captures it. The LLM's plausible
-role is explanation, interaction, and post-round review.
+**Natural-distribution check (13,560 decisions, 92% HOLD):** the random forest's
+balanced accuracy is only 0.302 and its rotation recall is 0.150; it collapses
+to HOLD and misses 85% of real rotations. Feature ablation shows that removing
+the features CV cannot provide costs only 3-4 points. So the bottleneck is the
+action policy/calibration, not perception.
+
+**Two-stage follow-up:** stage 1 (ROTATE vs HOLD, class-weighted) plus stage 2
+(destination, trained only on true rotations) fixes the collapse. Stage 2 reaches
+92.1% accuracy and 99.4% top-2 on true rotations. Stage 1 has ROC-AUC 0.923 but
+needs an operating point: at threshold 0.6, rotation recall is 0.825, false
+rotation rate 0.126, exact rotation accuracy 0.770; at 0.7, recall 0.556, false
+rate 0.053, exact 0.519. The destination problem is solved; the remaining choice
+is the false-rotation/missed-rotation trade-off.
+
+**Temporal-feature follow-up:** adding the previous window (movement, deltas,
+previous action) raises stage-1 average precision from 0.449 to 0.520, but
+ROC-AUC is flat (0.9145 -> 0.9147) and the 0.6 operating point is unchanged.
+Stage 1 is near its ceiling with teammate-only information; the missing signal is
+enemy last-seen / communication, not more teammate history.
+
+**Conclusion:** the LLM should not select actions. The two-stage policy is a
+viable candidate for live rotation advice, but stage 1 needs enemy last-seen
+data (demos or live radar logs) before CV is worth the investment.
 
 ### Model proposes, LLM explains (follow-up)
 
@@ -161,18 +181,25 @@ a place in the product.
 
 ## Next steps
 
-1. **Grounding variant + human review.** Require at least two concrete card
+1. **Get enemy last-seen data before more modelling.** Temporal features improved
+   stage-1 average precision but not ROC-AUC or the 0.6 operating point. The
+   next useful signal is enemy last-seen from radar/demos. Provide 10-20 Dust2
+   demos for visibility simulation, or log live radar + GSI for shadow mode.
+2. **Choose an operating point.** Stage 2 is strong (92.1% on true rotations);
+   stage 1 trades recall against false rotations (0.6 = recall 0.825 / false
+   0.126; 0.7 = recall 0.556 / false 0.053).
+3. **Grounding variant + human review.** Require at least two concrete card
    facts and the model probability in each explanation; have a player rate the
    20 rows in `human_review_explanations.csv` against the template.
-2. If the grounded LLM beats the template on usefulness, the product
+4. If the grounded LLM beats the template on usefulness, the product
    architecture is: statistical model → recommendation; LLM → explanation /
    interaction. If not, use the template and keep the LLM for free-form
    questions / post-round review.
-3. Collect GSI logs from the user's own matches for the individual buy/save
+5. Collect GSI logs from the user's own matches for the individual buy/save
    benchmark (GSI gives exact self money/weapons/utility).
-4. Parse raw demos with Awpy for T-player positions, kill feed and utility, to
+6. Parse raw demos with Awpy for T-player positions, kill feed and utility, to
    build the enemy/team masked-replay benchmark.
-5. Only after those pass: shadow mode, then a narrow live decision.
+7. Only after those pass: shadow mode, then a narrow live decision.
 
 ## Live v1: GSI-only buy/save coach
 

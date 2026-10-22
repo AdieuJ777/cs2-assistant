@@ -1,0 +1,486 @@
+{
+  "n": 13560,
+  "features": {
+    "cat": [
+      "area",
+      "round_phase",
+      "prev_round_winner_side",
+      "prev_round_attack_site",
+      "nearest_area"
+    ],
+    "num": [
+      "health",
+      "armor",
+      "current_equip_value",
+      "count_A",
+      "count_B",
+      "count_Mid",
+      "count_CT",
+      "dist_A",
+      "dist_B",
+      "dist_Mid",
+      "dist_CT",
+      "team_health_mean",
+      "score_diff_ct_minus_t_before",
+      "round_num",
+      "pistol_round_flag"
+    ]
+  },
+  "action_distribution": {
+    "HOLD": 12556,
+    "ROTATE_A": 134,
+    "ROTATE_B": 296,
+    "ROTATE_MID": 267,
+    "ROTATE_CT": 307
+  },
+  "argmax": {
+    "n": 13560,
+    "accuracy": 0.9342182890855457,
+    "balanced_accuracy": 0.3022226717167115,
+    "macro_f1": 0.32049875532867667,
+    "per_class_recall": {
+      "HOLD": 0.9968939152596368,
+      "ROTATE_A": 0.007462686567164179,
+      "ROTATE_B": 0.5067567567567568,
+      "ROTATE_MID": 0.0,
+      "ROTATE_CT": 0.0
+    },
+    "hold_recall": 0.9968939152596368,
+    "rotation_precision": 0.7947368421052632,
+    "rotation_recall": 0.150398406374502,
+    "false_rotation_rate": 0.003106084740363173,
+    "missed_rotation_rate": 0.849601593625498,
+    "true_rotation_share": 0.07404129793510325,
+    "confusion_matrix": [
+      [
+        12517,
+        3,
+        36,
+        0,
+        0
+      ],
+      [
+        133,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        146,
+        0,
+        150,
+        0,
+        0
+      ],
+      [
+        267,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        307,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "threshold_sweep": {
+    "0.3": {
+      "n": 13560,
+      "accuracy": 0.928023598820059,
+      "balanced_accuracy": 0.23145411260256754,
+      "macro_f1": 0.24444041950774648,
+      "per_class_recall": {
+        "HOLD": 0.9984867792290538,
+        "ROTATE_A": 0.0,
+        "ROTATE_B": 0.15878378378378377,
+        "ROTATE_MID": 0.0,
+        "ROTATE_CT": 0.0
+      },
+      "hold_recall": 0.9984867792290538,
+      "rotation_precision": 0.7121212121212122,
+      "rotation_recall": 0.046812749003984064,
+      "false_rotation_rate": 0.001513220770946161,
+      "missed_rotation_rate": 0.953187250996016,
+      "true_rotation_share": 0.07404129793510325,
+      "confusion_matrix": [
+        [
+          12537,
+          0,
+          19,
+          0,
+          0
+        ],
+        [
+          134,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          249,
+          0,
+          47,
+          0,
+          0
+        ],
+        [
+          267,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          307,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "0.4": {
+      "n": 13560,
+      "accuracy": 0.9331120943952802,
+      "balanced_accuracy": 0.2873121927279302,
+      "macro_f1": 0.30630020230134464,
+      "per_class_recall": {
+        "HOLD": 0.9973717744504619,
+        "ROTATE_A": 0.0,
+        "ROTATE_B": 0.4391891891891892,
+        "ROTATE_MID": 0.0,
+        "ROTATE_CT": 0.0
+      },
+      "hold_recall": 0.9973717744504619,
+      "rotation_precision": 0.7975460122699386,
+      "rotation_recall": 0.1294820717131474,
+      "false_rotation_rate": 0.0026282255495380697,
+      "missed_rotation_rate": 0.8705179282868526,
+      "true_rotation_share": 0.07404129793510325,
+      "confusion_matrix": [
+        [
+          12523,
+          0,
+          33,
+          0,
+          0
+        ],
+        [
+          134,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          166,
+          0,
+          130,
+          0,
+          0
+        ],
+        [
+          267,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          307,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "0.5": {
+      "n": 13560,
+      "accuracy": 0.9342182890855457,
+      "balanced_accuracy": 0.3022226717167115,
+      "macro_f1": 0.32049875532867667,
+      "per_class_recall": {
+        "HOLD": 0.9968939152596368,
+        "ROTATE_A": 0.007462686567164179,
+        "ROTATE_B": 0.5067567567567568,
+        "ROTATE_MID": 0.0,
+        "ROTATE_CT": 0.0
+      },
+      "hold_recall": 0.9968939152596368,
+      "rotation_precision": 0.7947368421052632,
+      "rotation_recall": 0.150398406374502,
+      "false_rotation_rate": 0.003106084740363173,
+      "missed_rotation_rate": 0.849601593625498,
+      "true_rotation_share": 0.07404129793510325,
+      "confusion_matrix": [
+        [
+          12517,
+          3,
+          36,
+          0,
+          0
+        ],
+        [
+          133,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          146,
+          0,
+          150,
+          0,
+          0
+        ],
+        [
+          267,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          307,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "0.6": {
+      "n": 13560,
+      "accuracy": 0.9342182890855457,
+      "balanced_accuracy": 0.3022226717167115,
+      "macro_f1": 0.32049875532867667,
+      "per_class_recall": {
+        "HOLD": 0.9968939152596368,
+        "ROTATE_A": 0.007462686567164179,
+        "ROTATE_B": 0.5067567567567568,
+        "ROTATE_MID": 0.0,
+        "ROTATE_CT": 0.0
+      },
+      "hold_recall": 0.9968939152596368,
+      "rotation_precision": 0.7947368421052632,
+      "rotation_recall": 0.150398406374502,
+      "false_rotation_rate": 0.003106084740363173,
+      "missed_rotation_rate": 0.849601593625498,
+      "true_rotation_share": 0.07404129793510325,
+      "confusion_matrix": [
+        [
+          12517,
+          3,
+          36,
+          0,
+          0
+        ],
+        [
+          133,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          146,
+          0,
+          150,
+          0,
+          0
+        ],
+        [
+          267,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          307,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "0.7": {
+      "n": 13560,
+      "accuracy": 0.9342182890855457,
+      "balanced_accuracy": 0.3022226717167115,
+      "macro_f1": 0.32049875532867667,
+      "per_class_recall": {
+        "HOLD": 0.9968939152596368,
+        "ROTATE_A": 0.007462686567164179,
+        "ROTATE_B": 0.5067567567567568,
+        "ROTATE_MID": 0.0,
+        "ROTATE_CT": 0.0
+      },
+      "hold_recall": 0.9968939152596368,
+      "rotation_precision": 0.7947368421052632,
+      "rotation_recall": 0.150398406374502,
+      "false_rotation_rate": 0.003106084740363173,
+      "missed_rotation_rate": 0.849601593625498,
+      "true_rotation_share": 0.07404129793510325,
+      "confusion_matrix": [
+        [
+          12517,
+          3,
+          36,
+          0,
+          0
+        ],
+        [
+          133,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          146,
+          0,
+          150,
+          0,
+          0
+        ],
+        [
+          267,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          307,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "0.8": {
+      "n": 13560,
+      "accuracy": 0.9342182890855457,
+      "balanced_accuracy": 0.3022226717167115,
+      "macro_f1": 0.32049875532867667,
+      "per_class_recall": {
+        "HOLD": 0.9968939152596368,
+        "ROTATE_A": 0.007462686567164179,
+        "ROTATE_B": 0.5067567567567568,
+        "ROTATE_MID": 0.0,
+        "ROTATE_CT": 0.0
+      },
+      "hold_recall": 0.9968939152596368,
+      "rotation_precision": 0.7947368421052632,
+      "rotation_recall": 0.150398406374502,
+      "false_rotation_rate": 0.003106084740363173,
+      "missed_rotation_rate": 0.849601593625498,
+      "true_rotation_share": 0.07404129793510325,
+      "confusion_matrix": [
+        [
+          12517,
+          3,
+          36,
+          0,
+          0
+        ],
+        [
+          133,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          146,
+          0,
+          150,
+          0,
+          0
+        ],
+        [
+          267,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          307,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "0.9": {
+      "n": 13560,
+      "accuracy": 0.9342182890855457,
+      "balanced_accuracy": 0.3022226717167115,
+      "macro_f1": 0.32049875532867667,
+      "per_class_recall": {
+        "HOLD": 0.9968939152596368,
+        "ROTATE_A": 0.007462686567164179,
+        "ROTATE_B": 0.5067567567567568,
+        "ROTATE_MID": 0.0,
+        "ROTATE_CT": 0.0
+      },
+      "hold_recall": 0.9968939152596368,
+      "rotation_precision": 0.7947368421052632,
+      "rotation_recall": 0.150398406374502,
+      "false_rotation_rate": 0.003106084740363173,
+      "missed_rotation_rate": 0.849601593625498,
+      "true_rotation_share": 0.07404129793510325,
+      "confusion_matrix": [
+        [
+          12517,
+          3,
+          36,
+          0,
+          0
+        ],
+        [
+          133,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          146,
+          0,
+          150,
+          0,
+          0
+        ],
+        [
+          267,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          307,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    }
+  }
+}

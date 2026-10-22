@@ -1,0 +1,58 @@
+{
+  "rows": 3813,
+  "matches": 9,
+  "rounds": 194,
+  "action_distribution": {
+    "HOLD": 3582,
+    "ROTATE_B": 72,
+    "ROTATE_MID": 71,
+    "ROTATE_CT": 66,
+    "ROTATE_A": 22
+  },
+  "windows": {
+    "10->12": 964,
+    "12->15": 955,
+    "15->18": 951,
+    "18->20": 943
+  },
+  "enemy_feature_means": {
+    "enemy_alive": 4.93443482821925,
+    "enemy_seen_now": 0.008392341987936008,
+    "enemy_seen_5s": 0.07081038552321008,
+    "enemy_unknown": 4.8636244426960396,
+    "enemy_seen5_ratio": 0.014529242066614215,
+    "enemy_last_seen_min_age": 92.72542945187516,
+    "enemy_most_recent_age": 92.72542945187516,
+    "enemy_seen_now_A": 0.0013113034356150013,
+    "enemy_seen_now_B": 0.0044584316810910045,
+    "enemy_seen_now_Mid": 0.0026226068712300026,
+    "enemy_seen_now_CT": 0.0,
+    "enemy_seen5_A": 0.010752688172043012,
+    "enemy_seen5_B": 0.022816679779701022,
+    "enemy_seen5_Mid": 0.037241017571466035,
+    "enemy_seen5_CT": 0.0,
+    "enemy_age_min_A": 97.95740312745869,
+    "enemy_age_min_B": 97.1085513375295,
+    "enemy_age_min_Mid": 95.55773423157619,
+    "enemy_age_min_CT": 99.0
+  },
+  "enemy_most_recent_area_distribution": {
+    "unknown": 3565,
+    "Mid": 133,
+    "B": 74,
+    "A": 41
+  },
+  "enemy_seen5_distribution": {
+    "0": 3565,
+    "1": 226,
+    "2": 22
+  },
+  "enemy_unknown_distribution": {
+    "5": 3376,
+    "4": 378,
+    "3": 38,
+    "2": 18,
+    "1": 3
+  },
+  "note": "Enemy features use the demo's `spotted` flag within a 5 s lookback. Absence of a spot is unknown, not an empty area."
+}

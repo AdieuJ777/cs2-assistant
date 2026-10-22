@@ -1,0 +1,317 @@
+{
+  "n": 100,
+  "feature_sets": {
+    "full_benchmark": {
+      "cat_features": [
+        "area",
+        "ct_econ_type",
+        "round_phase",
+        "prev_round_winner_side",
+        "prev_round_attack_site",
+        "nearest_area"
+      ],
+      "num_features": [
+        "health",
+        "armor",
+        "current_equip_value",
+        "count_A",
+        "count_B",
+        "count_Mid",
+        "count_CT",
+        "dist_A",
+        "dist_B",
+        "dist_Mid",
+        "dist_CT",
+        "team_health_mean",
+        "team_equip_mean",
+        "score_diff_ct_minus_t_before",
+        "round_num",
+        "pistol_round_flag",
+        "ct_total_equip"
+      ],
+      "metrics": {
+        "n": 100,
+        "n_features": 23,
+        "accuracy": 0.82,
+        "balanced_accuracy": 0.8200000000000001,
+        "macro_f1": 0.8062056223346545,
+        "top2_coverage": 0.93,
+        "per_class_recall": {
+          "HOLD": 0.45,
+          "ROTATE_A": 1.0,
+          "ROTATE_B": 0.9,
+          "ROTATE_MID": 0.8,
+          "ROTATE_CT": 0.95
+        },
+        "confusion_matrix": [
+          [
+            9,
+            1,
+            3,
+            3,
+            4
+          ],
+          [
+            0,
+            20,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            18,
+            0,
+            1
+          ],
+          [
+            1,
+            3,
+            0,
+            16,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0,
+            19
+          ]
+        ]
+      }
+    },
+    "gsi_radar_hud": {
+      "cat_features": [
+        "area",
+        "round_phase",
+        "prev_round_winner_side",
+        "prev_round_attack_site",
+        "nearest_area"
+      ],
+      "num_features": [
+        "health",
+        "armor",
+        "current_equip_value",
+        "count_A",
+        "count_B",
+        "count_Mid",
+        "count_CT",
+        "dist_A",
+        "dist_B",
+        "dist_Mid",
+        "dist_CT",
+        "team_health_mean",
+        "score_diff_ct_minus_t_before",
+        "round_num",
+        "pistol_round_flag"
+      ],
+      "metrics": {
+        "n": 100,
+        "n_features": 20,
+        "accuracy": 0.78,
+        "balanced_accuracy": 0.78,
+        "macro_f1": 0.7654480286738351,
+        "top2_coverage": 0.91,
+        "per_class_recall": {
+          "HOLD": 0.4,
+          "ROTATE_A": 0.9,
+          "ROTATE_B": 0.85,
+          "ROTATE_MID": 0.8,
+          "ROTATE_CT": 0.95
+        },
+        "confusion_matrix": [
+          [
+            8,
+            1,
+            3,
+            3,
+            5
+          ],
+          [
+            0,
+            18,
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            0,
+            17,
+            0,
+            1
+          ],
+          [
+            1,
+            3,
+            0,
+            16,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0,
+            19
+          ]
+        ]
+      }
+    },
+    "gsi_radar_no_hud": {
+      "cat_features": [
+        "area",
+        "round_phase",
+        "prev_round_winner_side",
+        "prev_round_attack_site",
+        "nearest_area"
+      ],
+      "num_features": [
+        "health",
+        "armor",
+        "current_equip_value",
+        "count_A",
+        "count_B",
+        "count_Mid",
+        "count_CT",
+        "dist_A",
+        "dist_B",
+        "dist_Mid",
+        "dist_CT",
+        "score_diff_ct_minus_t_before",
+        "round_num",
+        "pistol_round_flag"
+      ],
+      "metrics": {
+        "n": 100,
+        "n_features": 19,
+        "accuracy": 0.79,
+        "balanced_accuracy": 0.79,
+        "macro_f1": 0.7749718381976447,
+        "top2_coverage": 0.93,
+        "per_class_recall": {
+          "HOLD": 0.4,
+          "ROTATE_A": 0.9,
+          "ROTATE_B": 0.9,
+          "ROTATE_MID": 0.8,
+          "ROTATE_CT": 0.95
+        },
+        "confusion_matrix": [
+          [
+            8,
+            1,
+            3,
+            3,
+            5
+          ],
+          [
+            0,
+            18,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            18,
+            0,
+            1
+          ],
+          [
+            1,
+            3,
+            0,
+            16,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            19
+          ]
+        ]
+      }
+    },
+    "shape_only": {
+      "cat_features": [
+        "area",
+        "round_phase",
+        "prev_round_winner_side",
+        "prev_round_attack_site",
+        "nearest_area"
+      ],
+      "num_features": [
+        "health",
+        "armor",
+        "count_A",
+        "count_B",
+        "count_Mid",
+        "count_CT",
+        "dist_A",
+        "dist_B",
+        "dist_Mid",
+        "dist_CT",
+        "score_diff_ct_minus_t_before",
+        "round_num",
+        "pistol_round_flag"
+      ],
+      "metrics": {
+        "n": 100,
+        "n_features": 18,
+        "accuracy": 0.79,
+        "balanced_accuracy": 0.79,
+        "macro_f1": 0.7791004117833386,
+        "top2_coverage": 0.93,
+        "per_class_recall": {
+          "HOLD": 0.45,
+          "ROTATE_A": 0.9,
+          "ROTATE_B": 0.85,
+          "ROTATE_MID": 0.8,
+          "ROTATE_CT": 0.95
+        },
+        "confusion_matrix": [
+          [
+            9,
+            1,
+            3,
+            3,
+            4
+          ],
+          [
+            0,
+            18,
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            0,
+            17,
+            0,
+            1
+          ],
+          [
+            1,
+            3,
+            0,
+            16,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            19
+          ]
+        ]
+      }
+    }
+  }
+}

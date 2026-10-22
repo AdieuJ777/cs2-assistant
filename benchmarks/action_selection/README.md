@@ -103,6 +103,104 @@ It never recommends HOLD or ROTATE_CT.
   for explanation, interaction, and post-round review — or not at all for the
   decision itself. This is the same conclusion as the economy benchmark.
 
+## Feature ablation (for the live GSI + radar/HUD plan)
+
+The live plan cannot see teammate equipment value, team total equipment, or a
+team economy label. Removing those features costs only ~3-4 points on the
+balanced sample:
+
+| Feature set | Features | Balanced Acc | Macro F1 | Top-2 | HOLD recall |
+|---|---:|---:|---:|---:|---:|
+| Full benchmark | 23 | 0.820 | 0.806 | 0.930 | 0.45 |
+| GSI + radar/HUD | 20 | 0.780 | 0.765 | 0.910 | 0.40 |
+| GSI + radar, no HUD | 19 | 0.790 | 0.775 | 0.930 | 0.40 |
+| Shape only | 18 | 0.790 | 0.779 | 0.930 | 0.45 |
+
+So the missing live features are **not** the main blocker. The model still has a
+low HOLD recall even with all features.
+
+## Natural-distribution evaluation
+
+The balanced sample over-represents rotations. On all 13,560 decisions, where
+HOLD is 92%:
+
+| Metric | Value |
+|---|---:|
+| Accuracy | 0.934 |
+| Balanced accuracy | 0.302 |
+| Macro F1 | 0.320 |
+| HOLD recall | 0.997 |
+| Rotation precision | 0.795 |
+| Rotation recall | 0.150 |
+| False rotation rate | 0.003 |
+| Missed rotation rate | 0.850 |
+
+The model collapses to HOLD: it catches only 15% of real rotations and barely
+predicts ROTATE_A/MID/CT. A HOLD-threshold sweep does not fix it. This is a
+policy/calibration problem, not a perception problem.
+
+**Implication:** do not put this model into the live action prompt yet. Before
+investing in CV, fix the action policy: a two-stage rotation detector, class
+weights, or a cost-sensitive decision rule, evaluated on the natural
+distribution.
+
+## Two-stage policy (fixing the HOLD collapse)
+
+Stage 1: ROTATE vs HOLD with class weights. Stage 2: destination (A/B/MID/CT)
+trained only on true rotations.
+
+Stage 2 is strong on the 1,004 true rotations:
+
+| Metric | Value |
+|---|---:|
+| Accuracy | 0.921 |
+| Macro F1 | 0.732 |
+| Top-2 coverage | 0.994 |
+| Per-class recall | 0.91-0.93 |
+
+Stage 1 at threshold 0.5 has rotation recall 0.944 but precision 0.235;
+ROC-AUC is 0.923, so the signal exists but the operating point is the problem.
+
+End-to-end threshold sweep:
+
+| Threshold | Rot. precision | Rot. recall | False rot. rate | Exact rotation acc. | Overall acc. |
+|---:|---:|---:|---:|---:|---:|
+| 0.5 | 0.235 | 0.944 | 0.245 | 0.870 | 0.763 |
+| **0.6** | **0.343** | **0.825** | **0.126** | **0.770** | **0.866** |
+| **0.7** | **0.458** | **0.556** | **0.053** | **0.519** | **0.916** |
+| 0.8 | 0.534 | 0.433 | 0.030 | 0.401 | 0.928 |
+
+The two-stage decomposition works: destination prediction is solved once a
+rotation is detected. The remaining problem is the stage-1 operating point.
+For a recall-oriented coach, 0.6 is a reasonable start; for conservative advice,
+0.7. This is now a product trade-off, not a feature-availability blocker.
+
+## Temporal features (follow-up)
+
+Added the previous decision window for the same player: previous area/action,
+movement distance/speed, health/armor/equipment deltas, teammate count deltas,
+and window duration.
+
+On the 10,117 rows that have a previous window:
+
+| Model | Stage-1 ROC-AUC | Stage-1 AP | Stage-2 acc | Stage-2 top-2 |
+|---|---:|---:|---:|---:|
+| Base (same rows) | 0.9145 | 0.4486 | 0.9139 | 0.9934 |
+| Temporal | 0.9147 | **0.5198** | **0.9219** | 0.9894 |
+
+At threshold 0.6:
+
+| Model | Rot. precision | Rot. recall | False rot. rate | Exact rotation acc. |
+|---|---:|---:|---:|---:|
+| Base | 0.325 | 0.819 | 0.137 | 0.754 |
+| Temporal | 0.317 | 0.793 | 0.138 | 0.728 |
+
+At threshold 0.7, temporal shifts toward recall (0.661 vs 0.544) but with a
+higher false rate (0.079 vs 0.054). ROC-AUC is flat; only AP improves. This is
+not a breakthrough. Stage 1 is near its ceiling with teammate-only information;
+the missing signal is likely enemy last-seen / communication, not more
+teammate-temporal features.
+
 ## Model proposes, LLM explains (follow-up)
 
 The random forest chooses the top-2 actions; the LLM may only explain them, not
