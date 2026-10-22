@@ -1,0 +1,25 @@
+# Extra dependencies for the LLM arms:
+#   benchmarks/economy_inference/run_llm.py
+#   benchmarks/action_selection/run_llm.py
+#   benchmarks/action_selection/run_explain.py
+#
+# Install with:
+#   pip install -r requirements-llm.txt
+
+-r requirements.txt
+
+# Runtime dependencies of the STP Agent Framework (import name: kkk).
+pydantic>=2.7
+jsonschema>=4.22
+openai>=1.40
+
+# The STP Agent Framework itself lives in a separate repository. If it is not
+# already installed, use a sibling checkout:
+#   pip install -e ../STP-Agent-Framework-main/STP-Agent-Framework-main
+# or install it from GitHub:
+#   pip install "kkk @ git+https://github.com/AdieuJ777/STP-Agent-Framework.git"
+
+# The LLM arms also expect a local Ollama server with the model used in the
+# README (qwen3:8b). Ollama is a separate application, not a pip package:
+#   ollama serve
+#   ollama pull qwen3:8b

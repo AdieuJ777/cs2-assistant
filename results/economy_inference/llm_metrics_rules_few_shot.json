@@ -1,0 +1,250 @@
+{
+  "generated_at": "2026-10-22T09:24:57.648556+00:00",
+  "variant": "rules_few_shot",
+  "model": "qwen3:8b",
+  "base_url": "http://127.0.0.1:11434",
+  "llm": {
+    "n": 80,
+    "accuracy": 0.5875,
+    "macro_f1": 0.5909090909090909,
+    "per_class_recall": {
+      "eco": 0.3,
+      "half_buy": 0.4,
+      "long_gun": 0.65,
+      "pistol": 1.0
+    },
+    "confusion_matrix": [
+      [
+        6,
+        14,
+        0,
+        0
+      ],
+      [
+        6,
+        8,
+        6,
+        0
+      ],
+      [
+        1,
+        6,
+        13,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        20
+      ]
+    ],
+    "brier": 0.5060650000000001,
+    "model": "qwen3:8b",
+    "errors": 0,
+    "label_consistency": 1.0,
+    "normalized_rate": 0.0,
+    "mentions_money_rate": 0.0,
+    "latency_p50_s": 2.7549297499353997,
+    "latency_p95_s": 3.165436529996804,
+    "latency_mean_s": 2.71830155125208,
+    "subset_size": 80,
+    "per_class_counts": {
+      "eco": 20,
+      "half_buy": 20,
+      "long_gun": 20,
+      "pistol": 20
+    },
+    "pistol_hard_rule": {
+      "n": 80,
+      "accuracy": 0.5875,
+      "macro_f1": 0.5909090909090909,
+      "per_class_recall": {
+        "eco": 0.3,
+        "half_buy": 0.4,
+        "long_gun": 0.65,
+        "pistol": 1.0
+      },
+      "confusion_matrix": [
+        [
+          6,
+          14,
+          0,
+          0
+        ],
+        [
+          6,
+          8,
+          6,
+          0
+        ],
+        [
+          1,
+          6,
+          13,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          20
+        ]
+      ],
+      "brier": 0.5060650000000001
+    }
+  },
+  "baselines_on_same_rows": {
+    "majority": {
+      "n": 80,
+      "accuracy": 0.25,
+      "macro_f1": 0.1,
+      "per_class_recall": {
+        "eco": 1.0,
+        "half_buy": 0.0,
+        "long_gun": 0.0,
+        "pistol": 0.0
+      },
+      "confusion_matrix": [
+        [
+          20,
+          0,
+          0,
+          0
+        ],
+        [
+          20,
+          0,
+          0,
+          0
+        ],
+        [
+          20,
+          0,
+          0,
+          0
+        ],
+        [
+          20,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "hand_rule": {
+      "n": 80,
+      "accuracy": 0.6,
+      "macro_f1": 0.580572450805009,
+      "per_class_recall": {
+        "eco": 0.15,
+        "half_buy": 0.5,
+        "long_gun": 0.75,
+        "pistol": 1.0
+      },
+      "confusion_matrix": [
+        [
+          3,
+          17,
+          0,
+          0
+        ],
+        [
+          2,
+          10,
+          8,
+          0
+        ],
+        [
+          0,
+          5,
+          15,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          20
+        ]
+      ]
+    },
+    "tree_depth6": {
+      "n": 80,
+      "accuracy": 0.725,
+      "macro_f1": 0.7265770754142847,
+      "per_class_recall": {
+        "eco": 0.6,
+        "half_buy": 0.55,
+        "long_gun": 1.0,
+        "pistol": 0.75
+      },
+      "confusion_matrix": [
+        [
+          12,
+          7,
+          1,
+          0
+        ],
+        [
+          5,
+          11,
+          4,
+          0
+        ],
+        [
+          0,
+          0,
+          20,
+          0
+        ],
+        [
+          0,
+          5,
+          0,
+          15
+        ]
+      ],
+      "brier": 0.3799847687048447
+    },
+    "random_forest": {
+      "n": 80,
+      "accuracy": 0.725,
+      "macro_f1": 0.7013588263588264,
+      "per_class_recall": {
+        "eco": 0.25,
+        "half_buy": 0.7,
+        "long_gun": 0.95,
+        "pistol": 1.0
+      },
+      "confusion_matrix": [
+        [
+          5,
+          14,
+          1,
+          0
+        ],
+        [
+          2,
+          14,
+          4,
+          0
+        ],
+        [
+          0,
+          1,
+          19,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          20
+        ]
+      ],
+      "brier": 0.3500886191561586
+    }
+  },
+  "total_elapsed_s": 221.5554359999951
+}

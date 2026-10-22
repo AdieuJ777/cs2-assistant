@@ -1,0 +1,36 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # The live tests and the GSI server use only the standard library, so
+      # this workflow needs no third-party packages. compileall catches syntax
+      # errors in the benchmark scripts without importing their dependencies.
+      - name: Check Python syntax
+        run: python -m compileall -q benchmarks live
+
+      - name: Run live tests
+        run: python -m unittest discover -s live/tests -t . -v

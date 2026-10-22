@@ -1,0 +1,24 @@
+{
+  "generated_at": "2026-10-22T11:19:03.795306+00:00",
+  "metrics": {
+    "n": 50,
+    "errors": 0,
+    "action_match_rate": 1.0,
+    "enemy_claim_rate": 0.0,
+    "cites_card_terms_rate": 0.98,
+    "information_needed_rate": 1.0,
+    "confidence_language_distribution": {
+      "medium": 30,
+      "high": 20
+    },
+    "model_top1_accuracy_on_subset": 0.84,
+    "model_prob_top1_mean": 0.6485030433772665,
+    "latency_p50_s": 6.629344700020738,
+    "latency_p95_s": 7.721559424977749,
+    "mean_summary_chars": 190.4,
+    "elapsed_s": 336.6952827000059,
+    "model": "qwen3:8b",
+    "variant": "default"
+  },
+  "note": "Accuracy is the random forest's, not the LLM's. The LLM only explains the model's fixed top-2."
+}

@@ -1,0 +1,35 @@
+# Normalize line endings on commit. Windows checkouts remain usable because
+# Git converts LF back to CRLF only for files explicitly marked eol=crlf.
+* text=auto eol=lf
+
+# Source and documentation
+*.py     text eol=lf
+*.md     text eol=lf
+*.toml   text eol=lf
+*.cfg    text eol=lf
+*.json   text eol=lf
+*.csv    text eol=lf
+*.txt    text eol=lf
+*.yaml   text eol=lf
+*.yml    text eol=lf
+*.lock   text eol=lf
+*.cff    text eol=lf
+
+# Windows-only scripts
+*.bat    text eol=crlf
+*.ps1    text eol=crlf
+
+# Binary artifacts
+*.parquet binary
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.ico     binary
+*.pdf     binary
+*.zip     binary
+*.gz      binary
+
+# Keep generated benchmark outputs out of GitHub's language statistics.
+data/**    linguist-generated=true
+results/** linguist-generated=true

@@ -1,0 +1,72 @@
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# ---------------------------------------------------------------------------
+# Packaging and build artifacts
+# ---------------------------------------------------------------------------
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# ---------------------------------------------------------------------------
+# Test, lint and type-check caches
+# ---------------------------------------------------------------------------
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyright/
+.coverage
+.coverage.*
+htmlcov/
+
+# ---------------------------------------------------------------------------
+# Editors and IDEs
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ---------------------------------------------------------------------------
+# Operating-system files
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------------------
+# Secrets and local configuration
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# Keep the GSI template, but never commit a personal config with a real token.
+live/gsi_config/*.local.cfg
+
+# ---------------------------------------------------------------------------
+# Runtime artifacts
+# ---------------------------------------------------------------------------
+*.log
+
+# ---------------------------------------------------------------------------
+# Generated benchmark data and results
+#
+# data/ and results/ are small and are versioned on purpose so that the
+# numbers in the README can be inspected without the external TAGNet checkout.
+# Uncomment the next two lines if you would rather regenerate them locally.
+# ---------------------------------------------------------------------------
+# data/
+# results/

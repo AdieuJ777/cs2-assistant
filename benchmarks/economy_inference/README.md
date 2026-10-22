@@ -62,7 +62,7 @@ The script compares:
 Metrics: accuracy, macro F1, per-class recall, confusion matrix, Brier score
 (multi-class), and a regression MAE for `t_total_equip`.
 
-## Result (pilot)
+## Result (full 664 rows)
 
 | Model | Accuracy | Macro F1 | Brier |
 |---|---:|---:|---:|
@@ -73,6 +73,36 @@ Metrics: accuracy, macro F1, per-class recall, confusion matrix, Brier score
 | Random forest | 0.735 | 0.702 | **0.333** |
 
 `t_total_equip` MAE: ~3001 (mean ~20985, ~14%).
+
+## LLM arm (80-row balanced subset)
+
+To compare the LLM on the same footing, we sampled 20 rounds per class (80 rows)
+and evaluated every method on those rows. Baselines are out-of-fold predictions
+from the full 664-row set, grouped by match.
+
+| Method | Accuracy | Macro F1 | Brier | Notes |
+|---|---:|---:|---:|---|
+| Majority | 0.250 | 0.100 | — | |
+| Hand rule | 0.600 | 0.581 | — | |
+| Tree depth 6 | 0.725 | 0.727 | 0.380 | strong baseline |
+| Random forest | 0.725 | 0.701 | 0.350 | best calibration |
+| LLM zero-shot (qwen3:8b) | 0.350 | 0.298 | 0.888 | never predicted pistol |
+| LLM rules + few-shot | 0.588 | 0.591 | 0.506 | fixed pistol; ~hand rule |
+| LLM hybrid (tree prior) | 0.662 | 0.674 | 0.414 | mostly copies the prior |
+| LLM hybrid + pistol hard rule | 0.725 | 0.726 | 0.414 | matches tree; no gain |
+
+Prompt variants:
+
+- **Zero-shot**: 35.0% accuracy; 9/80 rationales cited exact money; p50 latency
+  4.7 s.
+- **Rules + few-shot**: 58.8%; 0/80 cited exact money; p50 latency 2.8 s. It
+  finally learned "pistol round -> pistol", but still sat at the hand-rule
+  level.
+- **Hybrid (tree prior)**: 66.2% raw; 72.5% after a deterministic pistol-round
+  override. It matches the tree's accuracy but is less calibrated
+  (Brier 0.414 vs 0.380) and does not improve on it.
+- 0 errors across 80 calls per variant; the STP task contract, structured output
+  and retries all worked.
 
 ## Interpretation
 
@@ -85,34 +115,50 @@ Metrics: accuracy, macro F1, per-class recall, confusion matrix, Brier score
   against a rules-only design.
 - The regression error (~14% of mean equipment value) means the agent should
   avoid exact-money claims even when the class is right.
+- **The LLM is not a competitive inferencer on this task.** Its best result is
+  to reproduce the tree prior; it does not improve accuracy or calibration. The
+  pistol fix that helped most is a deterministic rule, not reasoning.
+- **Architectural implication:** use the statistical/deterministic layer for
+  inference; use the LLM for explanation, qualitative synthesis, action
+  tradeoffs, and asking for missing information. This is the hybrid design.
+- Even when instructed not to, the hybrid LLM cited exact equipment values in
+  37.5% of rationales. This is a reliability risk for a user-facing assistant.
 
 ## What this benchmark does NOT prove
 
-- That an LLM adds value over the tree/forest baselines. The LLM arm is the next
-  step and is not implemented yet.
+- That a larger or fine-tuned LLM cannot do better. It shows that
+  `qwen3:8b` with zero-shot or light prompting is not enough.
 - That the result transfers to solo queue. The data is professional play.
 - That individual buy/save or enemy-position advice is feasible. The data does
   not support those benchmarks.
+- That the LLM cannot add value in other roles. It only shows that numeric
+  economy inference should not be its job.
 
-## Next: LLM arm
+## Reproducing the LLM arm
 
-The LLM arm should receive the same information as the baselines, in a
-structured situation card, and return:
+```bash
+# zero-shot
+uv run --with pandas --with pyarrow --with scikit-learn \
+  --with pydantic --with jsonschema \
+  python benchmarks/economy_inference/run_llm.py --per-class 20
 
-```json
-{
-  "enemy_buy": "eco | half_buy | long_gun | pistol",
-  "probabilities": {"eco": 0.0, "half_buy": 0.0, "long_gun": 0.0, "pistol": 0.0},
-  "confidence": 0.0,
-  "rationale": "short explanation that cites only card fields"
-}
+# rules + few-shot
+... --per-class 20 --variant rules_few_shot
+
+# hybrid: tree prior in the card
+... --per-class 20 --variant hybrid
 ```
 
-Compare against the tree/forest baselines on accuracy, macro F1, Brier score,
-and a hallucination check (does the rationale cite fields that are not in the
-card?). A useful result would be: the LLM is competitive with the tree on
-accuracy and better calibrated or more explainable; if it is worse than the
-hand rule, the "LLM reasoning" hypothesis is in trouble.
+Outputs:
+
+- `results/economy_inference/llm_predictions*.parquet`
+- `results/economy_inference/llm_metrics*.json`
+
+The native Ollama backend lives in `ollama_backend.py`. Ollama's
+OpenAI-compatible endpoint did not honour `think: false` for Qwen3 (the model
+spent its whole budget on hidden reasoning and returned empty content), so the
+adapter uses the native `/api/chat` endpoint with `think: false` and
+`format: json`.
 
 ## How to run
 

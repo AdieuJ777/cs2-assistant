@@ -1,0 +1,257 @@
+{
+  "audit": {
+    "rows": 13560,
+    "rounds": 697,
+    "matches": 33,
+    "action_distribution": {
+      "HOLD": 12556,
+      "ROTATE_CT": 307,
+      "ROTATE_B": 296,
+      "ROTATE_MID": 267,
+      "ROTATE_A": 134
+    },
+    "windows": {
+      "10->12": 3443,
+      "12->15": 3406,
+      "15->18": 3370,
+      "18->20": 3341
+    },
+    "area_centroids": {
+      "A": [
+        994.05,
+        1597.58
+      ],
+      "B": [
+        -1572.66,
+        2243.59
+      ],
+      "CT": [
+        173.43,
+        2162.18
+      ],
+      "Mid": [
+        -581.94,
+        2080.33
+      ]
+    },
+    "note": "CT-only next-move imitation. Enemy positions, per-player money, weapons, utility and kill feed are not in the released dataset."
+  },
+  "sample": {
+    "size": 100,
+    "action_distribution": {
+      "HOLD": 20,
+      "ROTATE_MID": 20,
+      "ROTATE_A": 20,
+      "ROTATE_B": 20,
+      "ROTATE_CT": 20
+    },
+    "matches": 32,
+    "rounds": 100
+  },
+  "baselines_on_sample": {
+    "majority_hold": {
+      "n": 100,
+      "accuracy": 0.2,
+      "balanced_accuracy": 0.2,
+      "macro_f1": 0.06666666666666667,
+      "per_class_recall": {
+        "HOLD": 1.0,
+        "ROTATE_A": 0.0,
+        "ROTATE_B": 0.0,
+        "ROTATE_MID": 0.0,
+        "ROTATE_CT": 0.0
+      },
+      "confusion_matrix": [
+        [
+          20,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          20,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          20,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          20,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          20,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "team_need_rule": {
+      "n": 100,
+      "accuracy": 0.24,
+      "balanced_accuracy": 0.24,
+      "macro_f1": 0.1663082692701699,
+      "per_class_recall": {
+        "HOLD": 0.75,
+        "ROTATE_A": 0.3,
+        "ROTATE_B": 0.15,
+        "ROTATE_MID": 0.0,
+        "ROTATE_CT": 0.0
+      },
+      "confusion_matrix": [
+        [
+          15,
+          4,
+          0,
+          1,
+          0
+        ],
+        [
+          9,
+          6,
+          4,
+          1,
+          0
+        ],
+        [
+          8,
+          8,
+          3,
+          0,
+          1
+        ],
+        [
+          13,
+          7,
+          0,
+          0,
+          0
+        ],
+        [
+          14,
+          4,
+          2,
+          0,
+          0
+        ]
+      ]
+    },
+    "tree_depth6": {
+      "n": 100,
+      "accuracy": 0.69,
+      "balanced_accuracy": 0.69,
+      "macro_f1": 0.6927156853986122,
+      "per_class_recall": {
+        "HOLD": 0.45,
+        "ROTATE_A": 0.75,
+        "ROTATE_B": 0.85,
+        "ROTATE_MID": 0.75,
+        "ROTATE_CT": 0.65
+      },
+      "confusion_matrix": [
+        [
+          9,
+          4,
+          3,
+          1,
+          3
+        ],
+        [
+          2,
+          15,
+          0,
+          3,
+          0
+        ],
+        [
+          3,
+          0,
+          17,
+          0,
+          0
+        ],
+        [
+          2,
+          3,
+          0,
+          15,
+          0
+        ],
+        [
+          6,
+          0,
+          1,
+          0,
+          13
+        ]
+      ],
+      "brier": 0.6052666666666667,
+      "top2_coverage": 0.76
+    },
+    "random_forest": {
+      "n": 100,
+      "accuracy": 0.82,
+      "balanced_accuracy": 0.8200000000000001,
+      "macro_f1": 0.8062056223346545,
+      "per_class_recall": {
+        "HOLD": 0.45,
+        "ROTATE_A": 1.0,
+        "ROTATE_B": 0.9,
+        "ROTATE_MID": 0.8,
+        "ROTATE_CT": 0.95
+      },
+      "confusion_matrix": [
+        [
+          9,
+          1,
+          3,
+          3,
+          4
+        ],
+        [
+          0,
+          20,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          18,
+          0,
+          1
+        ],
+        [
+          1,
+          3,
+          0,
+          16,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          19
+        ]
+      ],
+      "brier": 0.35050684903492363,
+      "top2_coverage": 0.93
+    }
+  }
+}

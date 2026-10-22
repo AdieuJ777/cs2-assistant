@@ -1,0 +1,11 @@
+# Core dependencies for the benchmark scripts:
+#   benchmarks/economy_inference/run.py
+#   benchmarks/action_selection/run.py
+#
+# The live GSI coach (live/) and its tests use only the Python standard library.
+# Python >= 3.11 is recommended (the LLM arm's STP framework requires it).
+
+numpy>=1.26
+pandas>=2.2
+pyarrow>=15.0
+scikit-learn>=1.4
