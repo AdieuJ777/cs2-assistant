@@ -1,0 +1,113 @@
+{
+  "rows": 4130,
+  "rotations": 641,
+  "rotation_share": 0.15520581113801452,
+  "rows_with_area_change": 641,
+  "displacement_quantiles": {
+    "0.1": {
+      "hold": 15.128958025164614,
+      "rotate": 178.76375786185753,
+      "all": 18.752252951521474
+    },
+    "0.25": {
+      "hold": 62.36819791901166,
+      "rotate": 302.0943145041313,
+      "all": 78.03869523939639
+    },
+    "0.5": {
+      "hold": 176.44761474493257,
+      "rotate": 436.2946609629023,
+      "all": 215.63590726657975
+    },
+    "0.75": {
+      "hold": 332.1977374097239,
+      "rotate": 607.1600080742024,
+      "all": 379.54352685594165
+    },
+    "0.9": {
+      "hold": 508.3933778374138,
+      "rotate": 677.1257241883452,
+      "all": 585.40888354024
+    },
+    "0.95": {
+      "hold": 613.0431993417549,
+      "rotate": 705.3770073192225,
+      "all": 648.4653817149082
+    }
+  },
+  "rotation_micro_movements": {
+    "200": {
+      "rotations": 71,
+      "share_of_rotations": 0.11076443057722309,
+      "share_of_all_rows": 0.47627118644067795
+    },
+    "400": {
+      "rotations": 281,
+      "share_of_rotations": 0.43837753510140404,
+      "share_of_all_rows": 0.7702179176755448
+    },
+    "600": {
+      "rotations": 467,
+      "share_of_rotations": 0.7285491419656787,
+      "share_of_all_rows": 0.910411622276029
+    },
+    "800": {
+      "rotations": 641,
+      "share_of_rotations": 1.0,
+      "share_of_all_rows": 1.0
+    },
+    "1000": {
+      "rotations": 641,
+      "share_of_rotations": 1.0,
+      "share_of_all_rows": 1.0
+    },
+    "1500": {
+      "rotations": 641,
+      "share_of_rotations": 1.0,
+      "share_of_all_rows": 1.0
+    }
+  },
+  "per_action": {
+    "HOLD": {
+      "n": 3489,
+      "mean_displacement": 219.62151116918545,
+      "median_displacement": 176.44761474493257,
+      "p90_displacement": 508.3933778374138,
+      "share_under_400": 0.8311837202636859,
+      "share_under_800": 1.0
+    },
+    "ROTATE_A": {
+      "n": 94,
+      "mean_displacement": 401.6617994733565,
+      "median_displacement": 372.70986270881656,
+      "p90_displacement": 639.7613581957186,
+      "share_under_400": 0.5425531914893617,
+      "share_under_800": 1.0
+    },
+    "ROTATE_B": {
+      "n": 118,
+      "mean_displacement": 381.8324953988336,
+      "median_displacement": 368.92185525802694,
+      "p90_displacement": 627.1697399953828,
+      "share_under_400": 0.576271186440678,
+      "share_under_800": 1.0
+    },
+    "ROTATE_CT": {
+      "n": 199,
+      "mean_displacement": 517.1487672538716,
+      "median_displacement": 535.0827997543,
+      "p90_displacement": 702.4648608243699,
+      "share_under_400": 0.2613065326633166,
+      "share_under_800": 1.0
+    },
+    "ROTATE_MID": {
+      "n": 230,
+      "mean_displacement": 414.02815356326545,
+      "median_displacement": 416.74971360630246,
+      "p90_displacement": 666.8372609069062,
+      "share_under_400": 0.4782608695652174,
+      "share_under_800": 1.0
+    }
+  },
+  "interpretation": "A 3 s window at ~250 units/s allows ~750 units of running. Rotations below ~400 units are usually repositioning, not a strategic site change; 400-800 is ambiguous; above 800 is a real rotation."
+}

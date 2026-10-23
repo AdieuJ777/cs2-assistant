@@ -1,0 +1,9 @@
+# Screen-capture radar perception (optional, separate from the stdlib server).
+#   live/radar_calibrate.py
+#   live/radar_parser.py
+#   live/radar_capture.py
+#   live/build_area_grid.py
+mss>=9.0
+pillow>=10.0
+numpy>=1.26
+scipy>=1.11

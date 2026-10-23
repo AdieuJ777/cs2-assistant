@@ -1,0 +1,895 @@
+{
+  "rows": 4130,
+  "events": 1145,
+  "matches": 9,
+  "action_distribution": {
+    "HOLD": 3489,
+    "ROTATE_MID": 230,
+    "ROTATE_CT": 199,
+    "ROTATE_B": 118,
+    "ROTATE_A": 94
+  },
+  "margins": {
+    "all": 4130,
+    "distance_le_2000": 3094,
+    "distance_le_1200": 1714,
+    "self_spots_enemy": 968
+  },
+  "baselines": {
+    "majority_hold": {
+      "accuracy": 0.8447941888619854,
+      "balanced_accuracy": 0.2,
+      "rotation_recall": 0.0
+    },
+    "nearest_enemy_rule": {
+      "accuracy": 0.411864406779661,
+      "balanced_accuracy": 0.41396163210134873,
+      "rotation_precision": 0.22011834319526627,
+      "rotation_recall": 0.8705148205928237,
+      "false_rotation_rate": 0.5666380051590714
+    }
+  },
+  "policies": {
+    "base": {
+      "cat_features": [
+        "area",
+        "round_phase",
+        "prev_round_winner_side",
+        "prev_round_attack_site",
+        "nearest_area"
+      ],
+      "num_features": [
+        "health",
+        "armor",
+        "current_equip_value",
+        "count_A",
+        "count_B",
+        "count_Mid",
+        "count_CT",
+        "dist_A",
+        "dist_B",
+        "dist_Mid",
+        "dist_CT",
+        "team_health_mean",
+        "score_diff_ct_minus_t_before",
+        "round_num",
+        "pistol_round_flag",
+        "ct_alive_count",
+        "seconds_since_freeze",
+        "seconds_since_previous_event"
+      ],
+      "overall": {
+        "n": 4130,
+        "rotation_count": 641,
+        "rotation_share": 0.15520581113801452,
+        "stage1_ranking": {
+          "roc_auc": 0.8334565196881305,
+          "average_precision": 0.42282721881919905
+        },
+        "stage2_on_true_rotations": {
+          "n": 641,
+          "accuracy": 0.8970358814352574,
+          "macro_f1": 0.7107811237533329,
+          "top2_coverage": 0.9906396255850234,
+          "per_class_recall": {
+            "HOLD": 0.0,
+            "ROTATE_A": 0.9361702127659575,
+            "ROTATE_B": 0.9067796610169492,
+            "ROTATE_MID": 0.8826086956521739,
+            "ROTATE_CT": 0.8894472361809045
+          },
+          "confusion_matrix": [
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              88,
+              1,
+              5,
+              0
+            ],
+            [
+              0,
+              4,
+              107,
+              2,
+              5
+            ],
+            [
+              0,
+              22,
+              0,
+              203,
+              5
+            ],
+            [
+              0,
+              2,
+              16,
+              4,
+              177
+            ]
+          ]
+        },
+        "threshold_sweep": {
+          "0.3": {
+            "rotation": {
+              "n": 4130,
+              "precision": 0.26286208387375704,
+              "recall": 0.9485179407176287,
+              "f1": 0.4116452268111036,
+              "true_positive": 608,
+              "false_positive": 1705,
+              "false_negative": 33,
+              "true_negative": 1784,
+              "false_rotation_rate": 0.4886787044998567,
+              "missed_rotation_rate": 0.0514820592823713,
+              "roc_auc": 0.8334565196881305,
+              "average_precision": 0.42282721881919905
+            },
+            "end_to_end": {
+              "accuracy": 0.5631961259079903,
+              "balanced_accuracy": 0.7917118057121877,
+              "macro_f1": 0.44969350538902625,
+              "rotation_exact_accuracy": 0.8455538221528861,
+              "rotation_detected_and_correct": 542,
+              "rotation_total": 641
+            }
+          },
+          "0.4": {
+            "rotation": {
+              "n": 4130,
+              "precision": 0.29644670050761424,
+              "recall": 0.9110764430577223,
+              "f1": 0.44733818460360014,
+              "true_positive": 584,
+              "false_positive": 1386,
+              "false_negative": 57,
+              "true_negative": 2103,
+              "false_rotation_rate": 0.39724849527085127,
+              "missed_rotation_rate": 0.08892355694227769,
+              "roc_auc": 0.8334565196881305,
+              "average_precision": 0.42282721881919905
+            },
+            "end_to_end": {
+              "accuracy": 0.6351089588377724,
+              "balanced_accuracy": 0.7883901792441717,
+              "macro_f1": 0.4809419664380485,
+              "rotation_exact_accuracy": 0.8112324492979719,
+              "rotation_detected_and_correct": 520,
+              "rotation_total": 641
+            }
+          },
+          "0.5": {
+            "rotation": {
+              "n": 4130,
+              "precision": 0.35509660226515655,
+              "recall": 0.8315132605304212,
+              "f1": 0.4976657329598506,
+              "true_positive": 533,
+              "false_positive": 968,
+              "false_negative": 108,
+              "true_negative": 2521,
+              "false_rotation_rate": 0.2774433935224993,
+              "missed_rotation_rate": 0.1684867394695788,
+              "roc_auc": 0.8334565196881305,
+              "average_precision": 0.42282721881919905
+            },
+            "end_to_end": {
+              "accuracy": 0.7246973365617433,
+              "balanced_accuracy": 0.7636131128856654,
+              "macro_f1": 0.5213040835341206,
+              "rotation_exact_accuracy": 0.7363494539781591,
+              "rotation_detected_and_correct": 472,
+              "rotation_total": 641
+            }
+          },
+          "0.6": {
+            "rotation": {
+              "n": 4130,
+              "precision": 0.3934126258005489,
+              "recall": 0.6708268330733229,
+              "f1": 0.49596309111880044,
+              "true_positive": 430,
+              "false_positive": 663,
+              "false_negative": 211,
+              "true_negative": 2826,
+              "false_rotation_rate": 0.19002579535683578,
+              "missed_rotation_rate": 0.3291731669266771,
+              "roc_auc": 0.8334565196881305,
+              "average_precision": 0.42282721881919905
+            },
+            "end_to_end": {
+              "accuracy": 0.7750605326876513,
+              "balanced_accuracy": 0.6796940489586227,
+              "macro_f1": 0.5211086897969188,
+              "rotation_exact_accuracy": 0.5850234009360374,
+              "rotation_detected_and_correct": 375,
+              "rotation_total": 641
+            }
+          },
+          "0.7": {
+            "rotation": {
+              "n": 4130,
+              "precision": 0.42269736842105265,
+              "recall": 0.40093603744149764,
+              "f1": 0.41152922337870296,
+              "true_positive": 257,
+              "false_positive": 351,
+              "false_negative": 384,
+              "true_negative": 3138,
+              "false_rotation_rate": 0.10060189165950129,
+              "missed_rotation_rate": 0.5990639625585024,
+              "roc_auc": 0.8334565196881305,
+              "average_precision": 0.42282721881919905
+            },
+            "end_to_end": {
+              "accuracy": 0.8142857142857143,
+              "balanced_accuracy": 0.4915269723934097,
+              "macro_f1": 0.4669643396829345,
+              "rotation_exact_accuracy": 0.35101404056162244,
+              "rotation_detected_and_correct": 225,
+              "rotation_total": 641
+            }
+          },
+          "0.8": {
+            "rotation": {
+              "n": 4130,
+              "precision": 0.6956521739130435,
+              "recall": 0.0249609984399376,
+              "f1": 0.04819277108433735,
+              "true_positive": 16,
+              "false_positive": 7,
+              "false_negative": 625,
+              "true_negative": 3482,
+              "false_rotation_rate": 0.002006305531670966,
+              "missed_rotation_rate": 0.9750390015600624,
+              "roc_auc": 0.8334565196881305,
+              "average_precision": 0.42282721881919905
+            },
+            "end_to_end": {
+              "accuracy": 0.8469733656174334,
+              "balanced_accuracy": 0.22589203292461643,
+              "macro_f1": 0.22824926853744984,
+              "rotation_exact_accuracy": 0.0249609984399376,
+              "rotation_detected_and_correct": 16,
+              "rotation_total": 641
+            }
+          }
+        }
+      },
+      "subsets": {
+        "all": {
+          "n": 4130,
+          "rotation_count": 641,
+          "roc_auc": 0.8334565196881305,
+          "average_precision": 0.42282721881919905,
+          "at_0_6": {
+            "n": 4130,
+            "precision": 0.3934126258005489,
+            "recall": 0.6708268330733229,
+            "f1": 0.49596309111880044,
+            "true_positive": 430,
+            "false_positive": 663,
+            "false_negative": 211,
+            "true_negative": 2826,
+            "false_rotation_rate": 0.19002579535683578,
+            "missed_rotation_rate": 0.3291731669266771,
+            "roc_auc": 0.8334565196881305,
+            "average_precision": 0.42282721881919905
+          },
+          "destination_at_0_6": {
+            "accuracy": 0.7750605326876513,
+            "balanced_accuracy": 0.6796940489586227,
+            "macro_f1": 0.5211086897969188,
+            "rotation_exact_accuracy": 0.5850234009360374,
+            "rotation_detected_and_correct": 375,
+            "rotation_total": 641
+          }
+        },
+        "distance_le_2000": {
+          "n": 3094,
+          "rotation_count": 477,
+          "roc_auc": 0.839538928262153,
+          "average_precision": 0.4313301989203645,
+          "at_0_6": {
+            "n": 3094,
+            "precision": 0.3831578947368421,
+            "recall": 0.7631027253668763,
+            "f1": 0.5101611772950245,
+            "true_positive": 364,
+            "false_positive": 586,
+            "false_negative": 113,
+            "true_negative": 2031,
+            "false_rotation_rate": 0.22392051967902177,
+            "missed_rotation_rate": 0.23689727463312368,
+            "roc_auc": 0.839538928262153,
+            "average_precision": 0.4313301989203645
+          },
+          "destination_at_0_6": {
+            "accuracy": 0.7608274078862314,
+            "balanced_accuracy": 0.7194727503210498,
+            "macro_f1": 0.5335686573398717,
+            "rotation_exact_accuracy": 0.6771488469601677,
+            "rotation_detected_and_correct": 323,
+            "rotation_total": 477
+          }
+        },
+        "distance_le_1200": {
+          "n": 1714,
+          "rotation_count": 236,
+          "roc_auc": 0.8409153459783033,
+          "average_precision": 0.41365101549202826,
+          "at_0_6": {
+            "n": 1714,
+            "precision": 0.33754512635379064,
+            "recall": 0.7923728813559322,
+            "f1": 0.47341772151898737,
+            "true_positive": 187,
+            "false_positive": 367,
+            "false_negative": 49,
+            "true_negative": 1111,
+            "false_rotation_rate": 0.2483085250338295,
+            "missed_rotation_rate": 0.2076271186440678,
+            "roc_auc": 0.8409153459783033,
+            "average_precision": 0.41365101549202826
+          },
+          "destination_at_0_6": {
+            "accuracy": 0.7450408401400234,
+            "balanced_accuracy": 0.7315197657600472,
+            "macro_f1": 0.5057963745504448,
+            "rotation_exact_accuracy": 0.7033898305084746,
+            "rotation_detected_and_correct": 166,
+            "rotation_total": 236
+          }
+        },
+        "self_spots_enemy": {
+          "n": 968,
+          "rotation_count": 111,
+          "roc_auc": 0.8485182965929757,
+          "average_precision": 0.390447352340148,
+          "at_0_6": {
+            "n": 968,
+            "precision": 0.2996389891696751,
+            "recall": 0.7477477477477478,
+            "f1": 0.42783505154639173,
+            "true_positive": 83,
+            "false_positive": 194,
+            "false_negative": 28,
+            "true_negative": 663,
+            "false_rotation_rate": 0.22637106184364061,
+            "missed_rotation_rate": 0.25225225225225223,
+            "roc_auc": 0.8485182965929757,
+            "average_precision": 0.390447352340148
+          },
+          "destination_at_0_6": {
+            "accuracy": 0.762396694214876,
+            "balanced_accuracy": 0.7077975579662,
+            "macro_f1": 0.4842019970250968,
+            "rotation_exact_accuracy": 0.6756756756756757,
+            "rotation_detected_and_correct": 75,
+            "rotation_total": 111
+          }
+        }
+      }
+    },
+    "base_plus_enemy": {
+      "cat_features": [
+        "area",
+        "round_phase",
+        "prev_round_winner_side",
+        "prev_round_attack_site",
+        "nearest_area",
+        "enemy_nearest_area"
+      ],
+      "num_features": [
+        "health",
+        "armor",
+        "current_equip_value",
+        "count_A",
+        "count_B",
+        "count_Mid",
+        "count_CT",
+        "dist_A",
+        "dist_B",
+        "dist_Mid",
+        "dist_CT",
+        "team_health_mean",
+        "score_diff_ct_minus_t_before",
+        "round_num",
+        "pistol_round_flag",
+        "ct_alive_count",
+        "seconds_since_freeze",
+        "seconds_since_previous_event",
+        "enemy_alive_count",
+        "enemy_visible_count",
+        "enemy_unknown_count",
+        "enemy_visible_ratio",
+        "newly_visible_count",
+        "enemy_nearest_distance",
+        "enemy_mean_distance",
+        "enemy_nearest_relative_bearing",
+        "enemy_team_nearest_distance",
+        "self_spots_enemy",
+        "self_spot_count",
+        "enemy_visible_A",
+        "enemy_visible_B",
+        "enemy_visible_Mid",
+        "enemy_visible_CT",
+        "enemy_visible_other"
+      ],
+      "overall": {
+        "n": 4130,
+        "rotation_count": 641,
+        "rotation_share": 0.15520581113801452,
+        "stage1_ranking": {
+          "roc_auc": 0.8495248494376577,
+          "average_precision": 0.4586840459762961
+        },
+        "stage2_on_true_rotations": {
+          "n": 641,
+          "accuracy": 0.953198127925117,
+          "macro_f1": 0.7579859130439377,
+          "top2_coverage": 0.9921996879875195,
+          "per_class_recall": {
+            "HOLD": 0.0,
+            "ROTATE_A": 0.8936170212765957,
+            "ROTATE_B": 0.9576271186440678,
+            "ROTATE_MID": 0.9695652173913043,
+            "ROTATE_CT": 0.9597989949748744
+          },
+          "confusion_matrix": [
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              84,
+              2,
+              8,
+              0
+            ],
+            [
+              0,
+              2,
+              113,
+              2,
+              1
+            ],
+            [
+              0,
+              5,
+              0,
+              223,
+              2
+            ],
+            [
+              0,
+              1,
+              2,
+              5,
+              191
+            ]
+          ]
+        },
+        "threshold_sweep": {
+          "0.3": {
+            "rotation": {
+              "n": 4130,
+              "precision": 0.27338782924613986,
+              "recall": 0.9391575663026521,
+              "f1": 0.4234963067182554,
+              "true_positive": 602,
+              "false_positive": 1600,
+              "false_negative": 39,
+              "true_negative": 1889,
+              "false_rotation_rate": 0.4585841215247922,
+              "missed_rotation_rate": 0.060842433697347896,
+              "roc_auc": 0.8495248494376577,
+              "average_precision": 0.4586840459762961
+            },
+            "end_to_end": {
+              "accuracy": 0.5961259079903147,
+              "balanced_accuracy": 0.8272196602785449,
+              "macro_f1": 0.4770793399785309,
+              "rotation_exact_accuracy": 0.8939157566302652,
+              "rotation_detected_and_correct": 573,
+              "rotation_total": 641
+            }
+          },
+          "0.4": {
+            "rotation": {
+              "n": 4130,
+              "precision": 0.32002218524681086,
+              "recall": 0.9001560062402496,
+              "f1": 0.47217675941080195,
+              "true_positive": 577,
+              "false_positive": 1226,
+              "false_negative": 64,
+              "true_negative": 2263,
+              "false_rotation_rate": 0.35139008311837205,
+              "missed_rotation_rate": 0.0998439937597504,
+              "roc_auc": 0.8495248494376577,
+              "average_precision": 0.4586840459762961
+            },
+            "end_to_end": {
+              "accuracy": 0.6808716707021791,
+              "balanced_accuracy": 0.8264343036600692,
+              "macro_f1": 0.5220935001809118,
+              "rotation_exact_accuracy": 0.8564742589703588,
+              "rotation_detected_and_correct": 549,
+              "rotation_total": 641
+            }
+          },
+          "0.5": {
+            "rotation": {
+              "n": 4130,
+              "precision": 0.38115942028985506,
+              "recall": 0.8205928237129485,
+              "f1": 0.520534388916378,
+              "true_positive": 526,
+              "false_positive": 854,
+              "false_negative": 115,
+              "true_negative": 2635,
+              "false_rotation_rate": 0.24476927486385783,
+              "missed_rotation_rate": 0.1794071762870515,
+              "roc_auc": 0.8495248494376577,
+              "average_precision": 0.4586840459762961
+            },
+            "end_to_end": {
+              "accuracy": 0.7593220338983051,
+              "balanced_accuracy": 0.7978977441539554,
+              "macro_f1": 0.567225659344906,
+              "rotation_exact_accuracy": 0.781591263650546,
+              "rotation_detected_and_correct": 501,
+              "rotation_total": 641
+            }
+          },
+          "0.6": {
+            "rotation": {
+              "n": 4130,
+              "precision": 0.41603053435114506,
+              "recall": 0.6801872074882995,
+              "f1": 0.5162818235642392,
+              "true_positive": 436,
+              "false_positive": 612,
+              "false_negative": 205,
+              "true_negative": 2877,
+              "false_rotation_rate": 0.17540842648323302,
+              "missed_rotation_rate": 0.31981279251170047,
+              "roc_auc": 0.8495248494376577,
+              "average_precision": 0.4586840459762961
+            },
+            "end_to_end": {
+              "accuracy": 0.7983050847457627,
+              "balanced_accuracy": 0.7192251819863495,
+              "macro_f1": 0.576052061720187,
+              "rotation_exact_accuracy": 0.6552262090483619,
+              "rotation_detected_and_correct": 420,
+              "rotation_total": 641
+            }
+          },
+          "0.7": {
+            "rotation": {
+              "n": 4130,
+              "precision": 0.47058823529411764,
+              "recall": 0.3868954758190328,
+              "f1": 0.4246575342465753,
+              "true_positive": 248,
+              "false_positive": 279,
+              "false_negative": 393,
+              "true_negative": 3210,
+              "false_rotation_rate": 0.07996560619088564,
+              "missed_rotation_rate": 0.6131045241809673,
+              "roc_auc": 0.8495248494376577,
+              "average_precision": 0.4586840459762961
+            },
+            "end_to_end": {
+              "accuracy": 0.8348668280871671,
+              "balanced_accuracy": 0.4848984073844118,
+              "macro_f1": 0.49990037295025624,
+              "rotation_exact_accuracy": 0.3712948517940718,
+              "rotation_detected_and_correct": 238,
+              "rotation_total": 641
+            }
+          },
+          "0.8": {
+            "rotation": {
+              "n": 4130,
+              "precision": 0.6111111111111112,
+              "recall": 0.0343213728549142,
+              "f1": 0.06499261447562776,
+              "true_positive": 22,
+              "false_positive": 14,
+              "false_negative": 619,
+              "true_negative": 3475,
+              "false_rotation_rate": 0.004012611063341932,
+              "missed_rotation_rate": 0.9656786271450858,
+              "roc_auc": 0.8495248494376577,
+              "average_precision": 0.4586840459762961
+            },
+            "end_to_end": {
+              "accuracy": 0.8467312348668281,
+              "balanced_accuracy": 0.2262979025345015,
+              "macro_f1": 0.2324333009538307,
+              "rotation_exact_accuracy": 0.0343213728549142,
+              "rotation_detected_and_correct": 22,
+              "rotation_total": 641
+            }
+          }
+        }
+      },
+      "subsets": {
+        "all": {
+          "n": 4130,
+          "rotation_count": 641,
+          "roc_auc": 0.8495248494376577,
+          "average_precision": 0.4586840459762961,
+          "at_0_6": {
+            "n": 4130,
+            "precision": 0.41603053435114506,
+            "recall": 0.6801872074882995,
+            "f1": 0.5162818235642392,
+            "true_positive": 436,
+            "false_positive": 612,
+            "false_negative": 205,
+            "true_negative": 2877,
+            "false_rotation_rate": 0.17540842648323302,
+            "missed_rotation_rate": 0.31981279251170047,
+            "roc_auc": 0.8495248494376577,
+            "average_precision": 0.4586840459762961
+          },
+          "destination_at_0_6": {
+            "accuracy": 0.7983050847457627,
+            "balanced_accuracy": 0.7192251819863495,
+            "macro_f1": 0.576052061720187,
+            "rotation_exact_accuracy": 0.6552262090483619,
+            "rotation_detected_and_correct": 420,
+            "rotation_total": 641
+          }
+        },
+        "distance_le_2000": {
+          "n": 3094,
+          "rotation_count": 477,
+          "roc_auc": 0.8449462432779064,
+          "average_precision": 0.44089924030453465,
+          "at_0_6": {
+            "n": 3094,
+            "precision": 0.4026602176541717,
+            "recall": 0.6981132075471698,
+            "f1": 0.5107361963190185,
+            "true_positive": 333,
+            "false_positive": 494,
+            "false_negative": 144,
+            "true_negative": 2123,
+            "false_rotation_rate": 0.1887657623232709,
+            "missed_rotation_rate": 0.3018867924528302,
+            "roc_auc": 0.8449462432779064,
+            "average_precision": 0.44089924030453465
+          },
+          "destination_at_0_6": {
+            "accuracy": 0.7899159663865546,
+            "balanced_accuracy": 0.720582585871084,
+            "macro_f1": 0.5687023361916979,
+            "rotation_exact_accuracy": 0.6729559748427673,
+            "rotation_detected_and_correct": 321,
+            "rotation_total": 477
+          }
+        },
+        "distance_le_1200": {
+          "n": 1714,
+          "rotation_count": 236,
+          "roc_auc": 0.8321254099676613,
+          "average_precision": 0.3752375803402514,
+          "at_0_6": {
+            "n": 1714,
+            "precision": 0.35909090909090907,
+            "recall": 0.6694915254237288,
+            "f1": 0.46745562130177515,
+            "true_positive": 158,
+            "false_positive": 282,
+            "false_negative": 78,
+            "true_negative": 1196,
+            "false_rotation_rate": 0.19079837618403248,
+            "missed_rotation_rate": 0.3305084745762712,
+            "roc_auc": 0.8321254099676613,
+            "average_precision": 0.3752375803402514
+          },
+          "destination_at_0_6": {
+            "accuracy": 0.7858809801633606,
+            "balanced_accuracy": 0.6846834875292107,
+            "macro_f1": 0.529936982544956,
+            "rotation_exact_accuracy": 0.6398305084745762,
+            "rotation_detected_and_correct": 151,
+            "rotation_total": 236
+          }
+        },
+        "self_spots_enemy": {
+          "n": 968,
+          "rotation_count": 111,
+          "roc_auc": 0.8455538385526717,
+          "average_precision": 0.37401571432013775,
+          "at_0_6": {
+            "n": 968,
+            "precision": 0.32857142857142857,
+            "recall": 0.6216216216216216,
+            "f1": 0.42990654205607476,
+            "true_positive": 69,
+            "false_positive": 141,
+            "false_negative": 42,
+            "true_negative": 716,
+            "false_rotation_rate": 0.1645274212368728,
+            "missed_rotation_rate": 0.3783783783783784,
+            "roc_auc": 0.8455538385526717,
+            "average_precision": 0.37401571432013775
+          },
+          "destination_at_0_6": {
+            "accuracy": 0.8047520661157025,
+            "balanced_accuracy": 0.6289966136547233,
+            "macro_f1": 0.49326209900982826,
+            "rotation_exact_accuracy": 0.5675675675675675,
+            "rotation_detected_and_correct": 63,
+            "rotation_total": 111
+          }
+        }
+      }
+    }
+  },
+  "seed_robustness": {
+    "base": {
+      "runs": [
+        {
+          "seed": 42,
+          "stage1_auc": 0.8334565196881305,
+          "stage1_ap": 0.42282721881919905,
+          "stage2_accuracy": 0.8970358814352574,
+          "stage2_top2": 0.9906396255850234,
+          "at_0.6_precision": 0.3934126258005489,
+          "at_0.6_recall": 0.6708268330733229,
+          "at_0.6_false_rotation": 0.19002579535683578,
+          "at_0.6_exact_rotation": 0.5850234009360374,
+          "at_0.6_overall_accuracy": 0.7750605326876513
+        },
+        {
+          "seed": 7,
+          "stage1_auc": 0.8328099590019714,
+          "stage1_ap": 0.4160072336870038,
+          "stage2_accuracy": 0.9032761310452418,
+          "stage2_top2": 0.9906396255850234,
+          "at_0.6_precision": 0.395004625346901,
+          "at_0.6_recall": 0.6661466458658346,
+          "at_0.6_false_rotation": 0.1874462596732588,
+          "at_0.6_exact_rotation": 0.5881435257410297,
+          "at_0.6_overall_accuracy": 0.7777239709443099
+        },
+        {
+          "seed": 2024,
+          "stage1_auc": 0.8333711164439698,
+          "stage1_ap": 0.41646333238250266,
+          "stage2_accuracy": 0.9017160686427457,
+          "stage2_top2": 0.9906396255850234,
+          "at_0.6_precision": 0.39249771271729184,
+          "at_0.6_recall": 0.6692667706708268,
+          "at_0.6_false_rotation": 0.19031241043278876,
+          "at_0.6_exact_rotation": 0.5850234009360374,
+          "at_0.6_overall_accuracy": 0.774818401937046
+        }
+      ],
+      "mean": {
+        "stage1_auc": 0.8332125317113572,
+        "stage1_ap": 0.4184325949629018,
+        "stage2_accuracy": 0.9006760270410816,
+        "stage2_top2": 0.9906396255850233,
+        "at_0.6_precision": 0.3936383212882473,
+        "at_0.6_recall": 0.6687467498699947,
+        "at_0.6_false_rotation": 0.1892614884876278,
+        "at_0.6_exact_rotation": 0.5860634425377015,
+        "at_0.6_overall_accuracy": 0.7758676351896691
+      },
+      "std": {
+        "stage1_auc": 0.0002867891423851014,
+        "stage1_ap": 0.0031130419885551735,
+        "stage2_accuracy": 0.002651596210916713,
+        "stage2_top2": 1.1102230246251565e-16,
+        "at_0.6_precision": 0.0010358109779295425,
+        "at_0.6_recall": 0.001945739670709284,
+        "at_0.6_false_rotation": 0.0012888829237825607,
+        "at_0.6_exact_rotation": 0.001470840938505579,
+        "at_0.6_overall_accuracy": 0.001316344344656986
+      }
+    },
+    "base_plus_enemy": {
+      "runs": [
+        {
+          "seed": 42,
+          "stage1_auc": 0.8495248494376577,
+          "stage1_ap": 0.4586840459762961,
+          "stage2_accuracy": 0.953198127925117,
+          "stage2_top2": 0.9921996879875195,
+          "at_0.6_precision": 0.41603053435114506,
+          "at_0.6_recall": 0.6801872074882995,
+          "at_0.6_false_rotation": 0.17540842648323302,
+          "at_0.6_exact_rotation": 0.6552262090483619,
+          "at_0.6_overall_accuracy": 0.7983050847457627
+        },
+        {
+          "seed": 7,
+          "stage1_auc": 0.850843457642003,
+          "stage1_ap": 0.4596263083942814,
+          "stage2_accuracy": 0.9500780031201248,
+          "stage2_top2": 0.9937597503900156,
+          "at_0.6_precision": 0.41975308641975306,
+          "at_0.6_recall": 0.6895475819032761,
+          "at_0.6_false_rotation": 0.17512181140728003,
+          "at_0.6_exact_rotation": 0.6583463338533542,
+          "at_0.6_overall_accuracy": 0.7990314769975787
+        },
+        {
+          "seed": 2024,
+          "stage1_auc": 0.850872521573262,
+          "stage1_ap": 0.45981359441237407,
+          "stage2_accuracy": 0.9547581903276131,
+          "stage2_top2": 0.9953198127925117,
+          "at_0.6_precision": 0.4194470924690181,
+          "at_0.6_recall": 0.6864274570982839,
+          "at_0.6_false_rotation": 0.17454858125537404,
+          "at_0.6_exact_rotation": 0.6599063962558502,
+          "at_0.6_overall_accuracy": 0.7997578692493946
+        }
+      ],
+      "mean": {
+        "stage1_auc": 0.8504136095509742,
+        "stage1_ap": 0.4593746495943172,
+        "stage2_accuracy": 0.952678107124285,
+        "stage2_top2": 0.9937597503900156,
+        "at_0.6_precision": 0.41841023774663877,
+        "at_0.6_recall": 0.6853874154966199,
+        "at_0.6_false_rotation": 0.17502627304862903,
+        "at_0.6_exact_rotation": 0.6578263130525221,
+        "at_0.6_overall_accuracy": 0.7990314769975787
+      },
+      "std": {
+        "stage1_auc": 0.0006285603032814171,
+        "stage1_ap": 0.0004942799686150446,
+        "stage2_accuracy": 0.001945739670709284,
+        "stage2_top2": 0.0012737856176719764,
+        "at_0.6_precision": 0.001687335031415857,
+        "at_0.6_recall": 0.0038914793414185586,
+        "at_0.6_false_rotation": 0.0003574718053667646,
+        "at_0.6_exact_rotation": 0.001945739670709284,
+        "at_0.6_overall_accuracy": 0.0005930967900201371
+      }
+    }
+  },
+  "stage1_feature_importance_top20": {
+    "dist_Mid": 0.15947846778744823,
+    "dist_B": 0.13381676363945885,
+    "dist_CT": 0.1189074708724545,
+    "area": 0.10601891406576493,
+    "dist_A": 0.08671672821473853,
+    "nearest_area": 0.07839293995018773,
+    "enemy_mean_distance": 0.044391906046363006,
+    "enemy_nearest_distance": 0.03895232903977813,
+    "seconds_since_freeze": 0.01996759246584491,
+    "enemy_nearest_relative_bearing": 0.018912805117623964,
+    "seconds_since_previous_event": 0.016350782395196755,
+    "count_A": 0.014932536814338341,
+    "enemy_visible_B": 0.014532887800842394,
+    "count_Mid": 0.012618882247815271,
+    "enemy_nearest_area": 0.012244549999260416,
+    "enemy_team_nearest_distance": 0.01128152172358319,
+    "current_equip_value": 0.011106842461230506,
+    "round_num": 0.008808540515247655,
+    "enemy_unknown_count": 0.00850716254534501,
+    "ct_alive_count": 0.007492424302158481
+  }
+}

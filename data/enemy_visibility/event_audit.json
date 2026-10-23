@@ -1,0 +1,99 @@
+{
+  "rows": 4130,
+  "events": 1145,
+  "matches": 9,
+  "rounds": 195,
+  "sample_hz": 10.67,
+  "horizon_seconds": 3.0,
+  "spot_cooldown_seconds": 2.0,
+  "per_match": {
+    "falcons-vs-vitality-m3-dust2": {
+      "events": 164,
+      "decisions": 563
+    },
+    "furia-vs-vitality-m3-dust2": {
+      "events": 89,
+      "decisions": 302
+    },
+    "mouz-vs-spirit-m1-dust2": {
+      "events": 130,
+      "decisions": 454
+    },
+    "mouz-vs-vitality-m1-dust2": {
+      "events": 131,
+      "decisions": 495
+    },
+    "spirit-vs-falcons-m3-dust2": {
+      "events": 177,
+      "decisions": 628
+    },
+    "spirit-vs-mouz-m1-dust2": {
+      "events": 114,
+      "decisions": 448
+    },
+    "vitality-vs-falcons-m2-dust2": {
+      "events": 92,
+      "decisions": 289
+    },
+    "vitality-vs-furia-m2-dust2": {
+      "events": 112,
+      "decisions": 423
+    },
+    "vitality-vs-mouz-m3-dust2": {
+      "events": 140,
+      "decisions": 528
+    }
+  },
+  "action_distribution": {
+    "HOLD": 3489,
+    "ROTATE_MID": 230,
+    "ROTATE_CT": 199,
+    "ROTATE_B": 118,
+    "ROTATE_A": 94
+  },
+  "affected_counts": {
+    "all": 4130,
+    "distance_le_2000": 3094,
+    "distance_le_1200": 1714,
+    "self_spots_enemy": 968
+  },
+  "enemy_feature_means": {
+    "enemy_alive_count": 4.022033898305085,
+    "enemy_visible_count": 1.4416464891041163,
+    "enemy_unknown_count": 2.5803874092009687,
+    "enemy_visible_ratio": 0.39470944309927364,
+    "enemy_nearest_distance": 1521.3772771827898,
+    "enemy_mean_distance": 1567.5890315181196,
+    "enemy_nearest_relative_bearing": 8.240853686742055,
+    "enemy_team_nearest_distance": 710.6773622264388,
+    "enemy_visible_A": 0.7871670702179177,
+    "enemy_visible_B": 0.4,
+    "enemy_visible_Mid": 0.23680387409200968,
+    "enemy_visible_CT": 0.01719128329297821,
+    "enemy_visible_other": 0.00048426150121065375
+  },
+  "enemy_nearest_distance_quantiles": {
+    "0.25": 938.5506762737444,
+    "0.5": 1349.796967535153,
+    "0.75": 2003.444388831988,
+    "0.9": 2699.4731022202905
+  },
+  "enemy_nearest_area_distribution": {
+    "A": 2066,
+    "B": 1164,
+    "Mid": 853,
+    "CT": 45,
+    "other": 2
+  },
+  "visibility_validation": {
+    "cross_side_kills": 1303,
+    "seen_rate_all": 0.5871066768994628,
+    "seen_rate_clean": 0.6437728937728938,
+    "clean_kills": 1092,
+    "seen_rate_through_smoke": 0.25477707006369427,
+    "seen_rate_through_wall": 0.3870967741935484,
+    "median_angle_diff_clean": 0.4188544451417897,
+    "note": "The proxy is a 2D lower bound: no elevation, no wall penetration, smoke is a 144-unit circle."
+  },
+  "note": "Event-driven dataset. Rows are decisions for every alive CT at the moment the team first sees a T after a >=2 s gap. Label is the CT's macro area 3 s later. Enemy features are not available to the base arm."
+}

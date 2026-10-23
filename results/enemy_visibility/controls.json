@@ -1,0 +1,60 @@
+{
+  "rows": 4130,
+  "arms": {
+    "base": {
+      "stage1_auc": 0.8334565196881305,
+      "stage1_ap": 0.42282721881919905,
+      "stage2_accuracy": 0.8970358814352574,
+      "stage2_top2": 0.9906396255850234,
+      "at_0.6_precision": 0.3934126258005489,
+      "at_0.6_recall": 0.6708268330733229,
+      "at_0.6_false_rotation": 0.19002579535683578,
+      "at_0.6_exact_rotation": 0.5850234009360374,
+      "at_0.6_overall_accuracy": 0.7750605326876513
+    },
+    "base_plus_enemy": {
+      "stage1_auc": 0.8495248494376577,
+      "stage1_ap": 0.4586840459762961,
+      "stage2_accuracy": 0.953198127925117,
+      "stage2_top2": 0.9921996879875195,
+      "at_0.6_precision": 0.41603053435114506,
+      "at_0.6_recall": 0.6801872074882995,
+      "at_0.6_false_rotation": 0.17540842648323302,
+      "at_0.6_exact_rotation": 0.6552262090483619,
+      "at_0.6_overall_accuracy": 0.7983050847457627
+    },
+    "base_plus_enemy_shuffled_within_match": {
+      "stage1_auc": 0.8265004030943696,
+      "stage1_ap": 0.40370092582832817,
+      "stage2_accuracy": 0.9017160686427457,
+      "stage2_top2": 0.982839313572543,
+      "at_0.6_precision": 0.39617224880382773,
+      "at_0.6_recall": 0.6458658346333853,
+      "at_0.6_false_rotation": 0.18085411292633993,
+      "at_0.6_exact_rotation": 0.5631825273010921,
+      "at_0.6_overall_accuracy": 0.7794188861985473
+    },
+    "base_plus_enemy_shuffled_global": {
+      "stage1_auc": 0.8253467885920941,
+      "stage1_ap": 0.4038532626119597,
+      "stage2_accuracy": 0.890795631825273,
+      "stage2_top2": 0.9890795631825273,
+      "at_0.6_precision": 0.38601532567049807,
+      "at_0.6_recall": 0.6287051482059283,
+      "at_0.6_false_rotation": 0.18372026368586988,
+      "at_0.6_exact_rotation": 0.5382215288611545,
+      "at_0.6_overall_accuracy": 0.7731234866828087
+    },
+    "base_plus_noise": {
+      "stage1_auc": 0.8225928693209638,
+      "stage1_ap": 0.38526792462385884,
+      "stage2_accuracy": 0.9017160686427457,
+      "stage2_top2": 0.984399375975039,
+      "at_0.6_precision": 0.39303000968054214,
+      "at_0.6_recall": 0.6333853354134166,
+      "at_0.6_false_rotation": 0.17970765262252794,
+      "at_0.6_exact_rotation": 0.5491419656786272,
+      "at_0.6_overall_accuracy": 0.7782082324455206
+    }
+  }
+}
