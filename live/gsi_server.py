@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import threading
 import time
 from datetime import datetime, timezone
@@ -27,10 +28,22 @@ from urllib.parse import urlparse
 try:  # package import (tests, `python -m live.gsi_server`)
     from .advisor import RoundHistory, advise
     from .area_lookup import AreaLookup
+    from .midround.agent import MidroundAgent
+    from .midround.llm_planner import (
+        DEFAULT_OLLAMA_URL,
+        DEFAULT_OPENAI_URL,
+        LLMConfig,
+    )
     from .rotation_policy import RotationAdvisor
 except ImportError:  # script import (`python live/gsi_server.py`)
     from advisor import RoundHistory, advise  # type: ignore
     from area_lookup import AreaLookup  # type: ignore
+    from midround.agent import MidroundAgent  # type: ignore
+    from midround.llm_planner import (  # type: ignore
+        DEFAULT_OLLAMA_URL,
+        DEFAULT_OPENAI_URL,
+        LLMConfig,
+    )
     from rotation_policy import RotationAdvisor  # type: ignore
 
 RADAR_TTL_SECONDS = 1.5
@@ -69,6 +82,14 @@ PAGE = """<!doctype html>
   .rec.over { color: #9aa4b2; }
   .rec.rotate { color: #f5c542; }
   .rec.hold { color: #58d68d; }
+  .rec.plan { font-size: 52px; line-height: 1.15; }
+  .rec.stale { color: #687386; }
+  .planhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .btn { margin-top: 12px; background: #2a3140; color: #e6ebf3; border: 1px solid #3a4355; border-radius: 10px; padding: 10px 18px; font-size: 16px; cursor: pointer; }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .facts { margin-top: 10px; }
+  .input { background: #0f1319; color: #e6ebf3; border: 1px solid #3a4355; border-radius: 8px; padding: 6px 10px; min-width: 230px; font-size: 15px; }
+  .input:focus { outline: none; border-color: #58d68d; }
   .row { display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-bottom: 1px solid #232a36; }
   .row:last-child { border-bottom: 0; }
   .label { color: #8b95a7; }
@@ -82,6 +103,31 @@ PAGE = """<!doctype html>
 <body>
 <div class="wrap">
   <div class="muted" id="conn">等待 GSI 数据...</div>
+  <div class="card">
+    <div class="planhead">
+      <span class="pill" id="plansource">中期指令</span>
+      <span class="muted" id="planage"></span>
+    </div>
+    <div class="rec plan over" id="plan">暂无指令</div>
+    <div class="muted" id="planreason">等待雷达和回合状态。</div>
+    <div id="planfacts"></div>
+    <button class="btn" id="hotkeybtn">按一下获取指令</button>
+    <label class="muted" style="margin-left:12px;font-size:14px"><input type="checkbox" id="tts"> 朗读</label>
+  </div>
+  <div class="card">
+    <div class="planhead">
+      <span class="pill">模型接入</span>
+      <span class="muted" id="llmstatus">未启用</span>
+    </div>
+    <div class="row"><span class="label">后端</span><select id="llmbackend" class="input"></select></div>
+    <div class="row"><span class="label">模型</span><input id="llmmodel" class="input" placeholder="qwen3:8b"></div>
+    <div class="row"><span class="label">接口地址</span><input id="llmurl" class="input" placeholder="http://127.0.0.1:11434"></div>
+    <div class="row"><span class="label">API Key</span><input id="llmkey" class="input" type="password" placeholder="可选，仅本次运行生效"></div>
+    <div class="row"><span class="label">超时（秒）</span><input id="llmtimeout" class="input" type="number" min="1" max="60" step="1" placeholder="5"></div>
+    <label class="muted" style="font-size:14px"><input type="checkbox" id="llmenabled" checked> 启用 LLM（关闭后使用内核模板）</label>
+    <button class="btn" id="llmapply">应用模型</button>
+    <div class="muted" id="llmhint" style="margin-top:8px;font-size:13px"></div>
+  </div>
   <div class="card">
     <div class="rec over" id="rec">等待中</div>
     <div class="muted" id="reason">启动 CS2 并进入 Dust2 CT 对局。</div>
@@ -105,6 +151,24 @@ const detailsEl = document.getElementById('details');
 const rotEl = document.getElementById('rot');
 const rotReasonEl = document.getElementById('rotreason');
 const rotDetailsEl = document.getElementById('rotdetails');
+const planEl = document.getElementById('plan');
+const planReasonEl = document.getElementById('planreason');
+const planSourceEl = document.getElementById('plansource');
+const planAgeEl = document.getElementById('planage');
+const planFactsEl = document.getElementById('planfacts');
+const hotkeyBtn = document.getElementById('hotkeybtn');
+const ttsEl = document.getElementById('tts');
+const llmStatusEl = document.getElementById('llmstatus');
+const llmBackendEl = document.getElementById('llmbackend');
+const llmModelEl = document.getElementById('llmmodel');
+const llmUrlEl = document.getElementById('llmurl');
+const llmKeyEl = document.getElementById('llmkey');
+const llmTimeoutEl = document.getElementById('llmtimeout');
+const llmEnabledEl = document.getElementById('llmenabled');
+const llmApplyBtn = document.getElementById('llmapply');
+const llmHintEl = document.getElementById('llmhint');
+const TOKEN = __TOKEN_JSON__;
+const BACKEND_DEFAULTS = {};
 
 const REC_TEXT = {
   FULL_BUY: '全买', HALF_BUY: '半买', SAVE: '存钱',
@@ -341,6 +405,178 @@ function renderRotation(r, radarAge) {
   rotDetailsEl.replaceChildren(box);
 }
 
+const SOURCE_TEXT = { template: '快速建议', llm: '模型建议' };
+
+function renderPlan(data) {
+  const p = data && data.plan;
+  if (!p) {
+    planEl.textContent = '暂无指令';
+    planEl.className = 'rec plan over';
+    planSourceEl.textContent = '中期指令';
+    planAgeEl.textContent = '';
+    planReasonEl.textContent = '等待雷达和回合状态。';
+    planFactsEl.replaceChildren();
+    return;
+  }
+  const age = data.age_s === null || data.age_s === undefined ? 0 : Number(data.age_s);
+  planEl.textContent = p.call || '—';
+  planEl.className = 'rec plan ' + (data.stale || age > 3 ? 'stale' : 'hold');
+  planSourceEl.textContent = SOURCE_TEXT[p.source] || '中期指令';
+  planAgeEl.textContent = data.age_s === null || data.age_s === undefined
+    ? '' : Number(data.age_s).toFixed(1) + ' 秒前';
+  planReasonEl.textContent = p.reason_short || '';
+
+  const facts = p.grounded_facts || [];
+  const ul = document.createElement('ul');
+  ul.className = 'facts';
+  for (const fact of facts) {
+    const li = document.createElement('li');
+    li.textContent = fact;
+    ul.appendChild(li);
+  }
+  planFactsEl.replaceChildren(ul);
+}
+
+function speakCall(call) {
+  if (!ttsEl.checked || !call || !('speechSynthesis' in window)) return;
+  const utter = new SpeechSynthesisUtterance(call);
+  utter.lang = 'zh-CN';
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utter);
+}
+
+async function pressHotkey() {
+  hotkeyBtn.disabled = true;
+  try {
+    const res = await fetch('/agent/hotkey', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ auth: { token: TOKEN } }),
+    });
+    const data = await res.json();
+    if (data.plan) {
+      renderPlan({ plan: data.plan, age_s: 0, fresh: true, stale: false });
+      lastHotkeySeq = Number(data.plan.hotkey_seq || lastHotkeySeq || 0);
+      speakCall(data.plan.call);
+    }
+  } catch (e) {
+    planReasonEl.textContent = '服务器不可达';
+  } finally {
+    hotkeyBtn.disabled = false;
+  }
+}
+hotkeyBtn.addEventListener('click', pressHotkey);
+let lastHotkeySeq = null;
+
+async function planTick() {
+  try {
+    const res = await fetch('/plan', { cache: 'no-store' });
+    const data = await res.json();
+    renderPlan(data);
+    // The global hotkey process posts to the server, not to this page. Watch
+    // the sequence number so a background tab still speaks the new call.
+    const seq = Number(data.hotkey_seq || 0);
+    if (lastHotkeySeq === null) {
+      lastHotkeySeq = seq;
+    } else if (seq > lastHotkeySeq) {
+      lastHotkeySeq = seq;
+      if (data.plan) speakCall(data.plan.call);
+    }
+  } catch (e) {
+    // Keep the last plan visible; the main tick reports connectivity.
+  }
+}
+
+function renderLlmStatus(status) {
+  if (!status || !status.enabled) {
+    llmStatusEl.textContent = '未启用（模板回退）';
+    return;
+  }
+  let text = (status.backend || '?') + ' · ' + (status.model || '?');
+  if (status.inflight) {
+    text += ' · 生成中';
+  } else if (status.last_latency_s !== null && status.last_latency_s !== undefined) {
+    text += ' · ' + Number(status.last_latency_s).toFixed(1) + 's';
+  }
+  if (status.last_error) text += ' · 错误: ' + status.last_error;
+  else if (status.successes) text += ' · 成功 ' + status.successes;
+  llmStatusEl.textContent = text;
+}
+
+async function loadLlmConfig() {
+  try {
+    const res = await fetch('/agent/config', { cache: 'no-store' });
+    const data = await res.json();
+    const config = data.config || {};
+    llmBackendEl.replaceChildren();
+    for (const backend of data.available_backends || []) {
+      const option = document.createElement('option');
+      option.value = backend.id;
+      option.textContent = backend.label;
+      llmBackendEl.appendChild(option);
+      if (backend.default_url) BACKEND_DEFAULTS[backend.id] = backend.default_url;
+    }
+    llmBackendEl.value = config.backend || 'ollama';
+    llmModelEl.value = config.model || '';
+    llmUrlEl.value = config.base_url || '';
+    llmTimeoutEl.value = config.timeout_s || 5;
+    llmEnabledEl.checked = config.enabled !== false;
+    if (data.models && data.models.length) {
+      llmHintEl.textContent = '可用模型：' + data.models.join(', ');
+    }
+    renderLlmStatus(data.status || {});
+  } catch (e) {
+    llmHintEl.textContent = '无法读取模型配置。';
+  }
+}
+
+async function applyLlmConfig() {
+  llmApplyBtn.disabled = true;
+  try {
+    const res = await fetch('/agent/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        auth: { token: TOKEN },
+        backend: llmBackendEl.value,
+        model: llmModelEl.value,
+        base_url: llmUrlEl.value,
+        api_key: llmKeyEl.value,
+        timeout_s: Number(llmTimeoutEl.value) || 5,
+        enabled: llmEnabledEl.checked,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      llmHintEl.textContent = '配置失败：' + (data.error || res.status);
+      return;
+    }
+    llmHintEl.textContent = llmEnabledEl.checked
+      ? '已应用；下一次状态更新会调用该模型。'
+      : '已关闭 LLM，当前使用内核模板。';
+    renderLlmStatus(data.status || {});
+  } catch (e) {
+    llmHintEl.textContent = '服务器不可达。';
+  } finally {
+    llmApplyBtn.disabled = false;
+  }
+}
+llmApplyBtn.addEventListener('click', applyLlmConfig);
+llmBackendEl.addEventListener('change', () => {
+  const defaultUrl = BACKEND_DEFAULTS[llmBackendEl.value];
+  if (defaultUrl) llmUrlEl.value = defaultUrl;
+});
+
+async function llmTick() {
+  try {
+    const res = await fetch('/agent/status', { cache: 'no-store' });
+    const data = await res.json();
+    renderLlmStatus(data.llm || {});
+  } catch (e) {
+    // Ignore; the main tick reports connectivity.
+  }
+}
+
 async function tick() {
   try {
     const res = await fetch('/state', { cache: 'no-store' });
@@ -351,6 +587,10 @@ async function tick() {
 }
 tick();
 setInterval(tick, 500);
+planTick();
+setInterval(planTick, 250);
+loadLlmConfig();
+setInterval(llmTick, 2000);
 </script>
 </body>
 </html>
@@ -364,6 +604,7 @@ class AppState:
         shadow_log: Path | None = None,
         area_lookup: AreaLookup | None = None,
         outcome_horizon: float = 5.0,
+        midround_agent: MidroundAgent | None = None,
     ) -> None:
         self.lock = threading.Lock()
         self.payload: dict[str, Any] | None = None
@@ -385,6 +626,13 @@ class AppState:
         self.last_log_at = 0.0
         self.round_key: tuple[str, int] | None = None
         self.round_live_started_at = 0.0
+        self.last_rotation: dict[str, Any] | None = None
+        self.last_seconds_since_freeze: float | None = None
+        self.midround_agent = (
+            midround_agent
+            if midround_agent is not None
+            else MidroundAgent(plan_log=shadow_log)
+        )
 
     def update(self, payload: dict[str, Any]) -> dict[str, Any]:
         with self.lock:
@@ -393,14 +641,80 @@ class AppState:
             self.payload = payload
             self.advice = advice
             self.updated_at = time.time()
-            self._rotation_locked()
+            self.last_rotation = self._rotation_locked()
+            self._refresh_plan_locked()
             return advice
 
     def update_radar(self, payload: dict[str, Any]) -> None:
         with self.lock:
             self.radar = payload
             self.radar_updated_at = time.time()
-            self._rotation_locked()
+            self.last_rotation = self._rotation_locked()
+            self._refresh_plan_locked()
+
+    # ------------------------------------------------------------------ plan
+    def _refresh_plan_locked(self) -> None:
+        if self.payload is None or self.midround_agent is None:
+            return
+        now = time.time()
+        radar_age = now - self.radar_updated_at if self.radar_updated_at else None
+        radar = (
+            self.radar
+            if radar_age is not None and radar_age <= RADAR_TTL_SECONDS
+            else None
+        )
+        try:
+            self.midround_agent.update(
+                self.payload,
+                radar,
+                self.last_rotation,
+                radar_age_s=radar_age if radar is not None else None,
+                seconds_since_freeze=self.last_seconds_since_freeze,
+                now=now,
+            )
+        except Exception as exc:  # never let the plan path break GSI advice
+            print(f"midround plan error: {type(exc).__name__}: {exc}")
+
+    def plan_snapshot(self) -> dict[str, Any]:
+        with self.lock:
+            if self.midround_agent is None:
+                return {"plan": None, "age_s": None, "source": None,
+                        "fresh": False, "stale": False, "candidates": []}
+            return self.midround_agent.plan_snapshot()
+
+    def request_plan(self) -> dict[str, Any] | None:
+        with self.lock:
+            if self.midround_agent is None:
+                return None
+            return self.midround_agent.current_plan(hotkey=True)
+
+    def refresh_plan(self) -> dict[str, Any] | None:
+        with self.lock:
+            if self.midround_agent is None:
+                return None
+            return self.midround_agent.refresh()
+
+    def agent_status(self) -> dict[str, Any]:
+        with self.lock:
+            if self.midround_agent is None:
+                return {"enabled": False}
+            return {"enabled": True, **self.midround_agent.status()}
+
+    def llm_config_snapshot(self) -> dict[str, Any]:
+        with self.lock:
+            agent = self.midround_agent
+        if agent is None:
+            return {"config": {}, "available_backends": [], "models": [], "status": {}}
+        # Model discovery performs a short HTTP call, so run it outside the
+        # state lock to keep the hotkey path fast.
+        return agent.llm_config_snapshot()
+
+    def configure_llm(self, payload: dict[str, Any]) -> dict[str, Any]:
+        with self.lock:
+            agent = self.midround_agent
+        if agent is None:
+            raise ValueError("mid-round agent is disabled")
+        return agent.configure_llm_from_mapping(payload)
 
     def snapshot(self) -> dict[str, Any]:
         with self.lock:
@@ -474,6 +788,7 @@ class AppState:
     # ------------------------------------------------------------- rotation
     def _rotation_locked(self) -> dict[str, Any] | None:
         if self.rotation_advisor is None or self.payload is None:
+            self.last_seconds_since_freeze = None
             return None
         now = time.time()
         radar_age = now - self.radar_updated_at if self.radar_updated_at else None
@@ -512,6 +827,7 @@ class AppState:
                 has_position = True
                 position_source = "radar_labels"
         if not has_position:
+            self.last_seconds_since_freeze = None
             return {
                 "action": "NO_POSITION",
                 "destination": None,
@@ -551,6 +867,7 @@ class AppState:
                 if self.round_live_started_at
                 else 0.0
             )
+        self.last_seconds_since_freeze = seconds_since_freeze
 
         enemies_raw = (radar or {}).get("enemies", [])
         enemies = [
@@ -818,7 +1135,13 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
-        if path not in {"/", "/radar"}:
+        if path not in {
+            "/",
+            "/radar",
+            "/agent/hotkey",
+            "/agent/refresh",
+            "/agent/config",
+        }:
             self._send_json(404, {"error": "not found"})
             return
         length = int(self.headers.get("Content-Length", "0") or 0)
@@ -853,6 +1176,25 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(200, {"ok": True})
             return
 
+        if path == "/agent/hotkey":
+            plan = self.server.state.request_plan()
+            self._send_json(200, {"ok": True, "plan": plan})
+            return
+
+        if path == "/agent/refresh":
+            plan = self.server.state.refresh_plan()
+            self._send_json(200, {"ok": True, "plan": plan})
+            return
+
+        if path == "/agent/config":
+            try:
+                snapshot = self.server.state.configure_llm(payload)
+            except (ValueError, TypeError) as exc:
+                self._send_json(400, {"error": str(exc)})
+                return
+            self._send_json(200, {"ok": True, **snapshot})
+            return
+
         advice = self.server.state.update(payload)
         if getattr(self.server, "verbose", False):
             print(
@@ -865,7 +1207,9 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
         if path == "/":
-            self._send_html(200, PAGE)
+            token = getattr(self.server, "token", None)
+            html = PAGE.replace("__TOKEN_JSON__", json.dumps(token or ""))
+            self._send_html(200, html)
             return
         if path == "/state":
             self._send_json(200, self.server.state.snapshot())
@@ -875,6 +1219,15 @@ class Handler(BaseHTTPRequestHandler):
             return
         if path == "/debug_payload":
             self._send_json(200, self.server.state.debug_payload())
+            return
+        if path == "/plan":
+            self._send_json(200, self.server.state.plan_snapshot())
+            return
+        if path == "/agent/status":
+            self._send_json(200, self.server.state.agent_status())
+            return
+        if path == "/agent/config":
+            self._send_json(200, self.server.state.llm_config_snapshot())
             return
         self._send_json(404, {"error": "not found"})
 
@@ -909,6 +1262,25 @@ def main() -> None:
         default=DEFAULT_AREA_GRID,
         help="JSON area grid used to compare advice with the actual area.",
     )
+    parser.add_argument(
+        "--llm-backend",
+        choices=("ollama", "openai", "none"),
+        default="ollama",
+        help="LLM backend for mid-round selection; 'openai' means any "
+        "OpenAI-compatible /v1/chat/completions endpoint.",
+    )
+    parser.add_argument("--llm-model", default="qwen3:8b")
+    parser.add_argument(
+        "--llm-url",
+        default=None,
+        help="Backend base URL (default: Ollama 11434 or OpenAI-compatible :1234/v1).",
+    )
+    parser.add_argument(
+        "--llm-api-key",
+        default=os.environ.get("CS2_LLM_API_KEY", ""),
+        help="API key for OpenAI-compatible backends; defaults to $CS2_LLM_API_KEY.",
+    )
+    parser.add_argument("--llm-timeout", type=float, default=5.0)
     args = parser.parse_args()
 
     advisor = None
@@ -924,6 +1296,27 @@ def main() -> None:
     if str(args.shadow_log).lower() == "none":
         shadow_log = None
 
+    agent = MidroundAgent(plan_log=shadow_log)
+    if args.llm_backend != "none":
+        default_url = (
+            DEFAULT_OPENAI_URL if args.llm_backend == "openai" else DEFAULT_OLLAMA_URL
+        )
+        llm_config = LLMConfig(
+            backend=args.llm_backend,
+            model=args.llm_model,
+            base_url=args.llm_url or default_url,
+            api_key=args.llm_api_key,
+            timeout_s=args.llm_timeout,
+            enabled=True,
+        )
+        agent.configure_llm(llm_config)
+        print(
+            f"LLM backend: {args.llm_backend} model={args.llm_model} "
+            f"url={llm_config.base_url}"
+        )
+    else:
+        print("LLM backend disabled; using the kernel template plan.")
+
     area_lookup = AreaLookup.load(args.area_grid, DEFAULT_PLACES)
     server = ThreadingHTTPServer((args.host, args.port), Handler)
     server.state = AppState(  # type: ignore[attr-defined]
@@ -931,6 +1324,7 @@ def main() -> None:
         shadow_log,
         area_lookup=area_lookup,
         outcome_horizon=args.outcome_horizon,
+        midround_agent=agent,
     )
     server.token = args.token  # type: ignore[attr-defined]
     server.verbose = args.verbose  # type: ignore[attr-defined]

@@ -150,6 +150,130 @@ The parser was validated on `data/radar_capture/ingame_mid.jpg`: one enemy on
 the T side and three teammates near mid, with `parsed_overlay3.png` showing the
 detected rings. See `requirements-radar.txt` for the optional dependencies.
 
+### Mid-round agent (M2: template plan)
+
+`live/midround/` turns GSI + radar into one short, executable call and caches
+it. M2 has no LLM yet: the kernel's first legal candidate becomes the template
+plan, so the hotkey path stays available while the LLM work is built.
+
+Endpoints:
+
+- `GET /plan` — cached plan, age, `source`, `fresh`/`stale`, plus candidates;
+- `POST /agent/hotkey` — return the latest plan immediately (never waits);
+- `POST /agent/refresh` — debug: rebuild the template plan now;
+- `GET /agent/status` — cache hits, plan age, candidate count, last error.
+
+The web page polls `/plan` every 250 ms, shows the call in large text, turns it
+gray after 3 s, and includes a "按一下获取指令" button. Optional global hotkey:
+
+```bash
+python -m pip install pynput
+python -m live.midround.hotkey --token my-secret --button x1
+```
+
+It only listens for the mouse side button; it never injects input into the
+game. Plans are appended to the same shadow log with `record_type: "plan"`.
+The plan cache is invalidated whenever the state fingerprint changes; a plan
+older than 2 s is marked stale and one older than 4 s is rebuilt.
+
+### LLM selection (M3)
+
+The background slow loop asks an LLM to pick one candidate and rephrase it.
+Ollama is the default; any OpenAI-compatible endpoint can be used instead:
+
+```bash
+# local Ollama (default)
+python live/gsi_server.py --token my-secret \
+  --llm-backend ollama --llm-model qwen3:8b
+
+# LM Studio / vLLM / llama.cpp / OpenAI-compatible
+python live/gsi_server.py --token my-secret \
+  --llm-backend openai --llm-url http://127.0.0.1:1234/v1 \
+  --llm-model your-model --llm-api-key optional
+
+# template only
+python live/gsi_server.py --token my-secret --llm-backend none
+```
+
+The page also has a **模型接入** panel: choose the backend, model and base URL,
+optionally enter an API key (memory only, never written to disk), and apply it
+at runtime. `GET /agent/config` exposes the same information for other tools.
+No extra Python package is needed: both backends use `urllib` directly.
+
+Safety and failure behaviour:
+
+- the LLM only selects from the existing candidates and copies grounded facts;
+- the validator rejects unknown ids, calls >20 chars, invented facts, unknown
+  areas and phrases such as "敌人一定在"/"肯定"/"百分之";
+- timeout 5 s (`--llm-timeout`), one retry on invalid JSON, no retry on
+  connection failure;
+- any failure leaves the kernel template plan in place;
+- a result that arrives after the game state changed is discarded;
+- the hotkey path still only reads the cache and never waits for the model.
+
+Plan records carry `source: "llm"` or `"template"` and `llm_latency_s`.
+
+### Single-screen use
+
+The page is not an overlay. With one monitor there are three options:
+
+- **Always-on-top ticker** (recommended, no browser needed):
+
+  ```bash
+  python -m live.midround.ticker --token change-me
+  # optional: --font-size 32 --opacity 0.85
+  ```
+
+  It reads `/state` and `/plan` every 250 ms and follows the round:
+
+  - freeze time: buy/save recommendation and estimated cost;
+  - live round: the mid-round call, source and freshness;
+  - left-click: expand round, score, radar, rotation, facts and LLM status;
+  - right-click: **模型设置**, **立即刷新**, **退出**;
+  - flashes for 1.4 s when a hotkey is pressed.
+
+  The settings window can switch backend/model/base URL, set the timeout and
+  enter an API key at runtime; `--token` must match the server. The default
+  position is below the top-left radar (do not drag it over the radar). It
+  works over CS2 in fullscreen-windowed/borderless mode and never injects
+  input.
+
+- **Steam overlay browser**: Shift+Tab, open `http://127.0.0.1:3000`, tick
+  **朗读**. Mouse4/5 navigate the overlay browser forward/back, so use a
+  keyboard hotkey there:
+
+  ```bash
+  python -m live.midround.hotkey --key f8
+  ```
+
+  Keep the overlay **closed** while playing: the overlay dims the screen and
+  `radar_capture.py` then detects no dots or A/B labels, so the agent reports
+  `NO_POSITION`. Use the ticker for in-game display and open the overlay only
+  between rounds.
+
+- **Phone on the same LAN**: run the server with `--host 0.0.0.0` and open
+  `http://<pc-ip>:3000` on the phone (local network only; do not forward the
+  port to the internet).
+
+The page watches `hotkey_seq` in `/plan`, so a press from the separate hotkey
+process makes a background tab speak the new call even when the game has focus.
+Background-tab polling may be throttled to about 1 s by the browser; the call
+itself is already cached, so audio latency stays low.
+
+### Other LLM providers
+
+Any OpenAI-compatible API works, for example DeepSeek:
+
+```powershell
+$env:CS2_LLM_API_KEY = "sk-..."
+python live/gsi_server.py --token my-secret --llm-backend openai `
+  --llm-url https://api.deepseek.com --llm-model your-model-id
+```
+
+`--llm-api-key` defaults to `CS2_LLM_API_KEY`, so the key does not have to
+appear in the command line. The same values can be applied at runtime in the
+**模型接入** panel; a key entered there is memory-only.
+
 ### Demo replay (end-to-end harness)
 
 To exercise the full chain without a live radar client, replay a parsed demo
@@ -172,13 +296,23 @@ speed and uses the same FOV/LOS/smoke proxy as the benchmark.
 ### Shadow log and outcome evaluation
 
 Every rotation call is appended to `live/shadow_log.jsonl` (disable with
-`--shadow-log none`). There are two record types:
+`--shadow-log none`). The mid-round agent uses the same file. Record types:
 
-- `advice` — written at decision time (`action`, `confidence`, `P(rotate)`,
-  radar state, reason);
-- `outcome` — written `--outcome-horizon` seconds later (default 5 s), with the
-  player's actual area/action, `matched`, `player_moved`, and status
-  (`ok`, `died`, `no_position`, `round_changed`).
+- `advice` / `outcome` — the v2 rotation call and what the player did
+  `--outcome-horizon` seconds later (default 5 s);
+- `plan` — a mid-round plan (template or LLM), with the full state card and
+  candidates;
+- `plan_llm` — one LLM attempt, including timeouts, invalid JSON and
+  validation failures;
+- `plan_outcome` — what the player actually did 3 s and 5 s after pressing the
+  hotkey (`adopted`, `actual_action`, `actual_area`, `status`; statuses are
+  `ok`, `died`, `round_changed`, `not_live`, `no_position`).
+
+Adoption means the player's area at the horizon equals the plan's target area
+(so holding and rotating are both measurable). Plans made without a usable
+position/target are logged as `no_position` and excluded from the adoption
+denominator, because there is nothing to adopt. Duplicate hotkey presses for
+the same plan do not create duplicate outcome samples.
 
 The outcome uses the same majority-vote area grid as the benchmark, so
 `HOLD`/`ROTATE_*` mean the same thing offline and live.
@@ -190,9 +324,12 @@ python live/analyze_shadow.py live/shadow_log.jsonl
 ```
 
 It reports advice coverage, action/confidence distributions, exact match rate,
-and binary rotate precision/recall/false/missed rates. The log is the intended
-input for the "prompt vs no prompt" decision; it does not change the game and
-does not show a prompt automatically.
+and binary rotate precision/recall/false/missed rates. For the mid-round agent
+it also reports plan source distribution, call lengths, LLM latency and
+attempt/validation failures, plus adoption rate at 3 s / 5 s split by
+`llm` vs `template`. The log is the intended input for the "prompt vs no
+prompt" decision; it does not change the game and does not show a prompt
+automatically.
 
 Note: advice is deduplicated per round/action every 2 s, so a long hold produces
 several overlapping 5 s outcomes. Treat records as samples, not independent
@@ -246,8 +383,11 @@ python -m unittest discover -s live/tests -t .
 
 The tests use synthetic GSI payloads; they do not require CS2. The rotation
 tests also check that the stdlib tree traversal matches scikit-learn exactly
-(`test_tree_traversal_matches_sklearn`). Current suite: 28 tests; the 8 radar
-parser tests need Pillow/numpy/scipy and skip in the stdlib-only run.
+(`test_tree_traversal_matches_sklearn`). Current suite: 157 tests, including
+the mid-round state card, route graph, candidates, plan cache, agent, validator,
+LLM planner/backends and HTTP routes; the radar parser tests and the screenshot
+integration test need Pillow/numpy/scipy and skip in the stdlib-only run. LLM
+tests use a fake backend, so they do not need Ollama.
 
 ## Limitations
 

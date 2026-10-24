@@ -504,3 +504,80 @@ call 不超过 20 个汉字。
 6. 配套单测
 
 M1 不接触 LLM、不接触热键，先把“状态 -> 合法候选”跑通。
+
+### M1 状态（2026-10-23）
+
+已完成：
+
+- `live/midround/state_card.py`：GSI + 雷达 -> 状态卡，含缺失值标注
+- `live/models/dust2_ct_routes.json`：14 个节点、18 条边的手工拓扑
+- `live/midround/route_graph.py`：safe / fast 路线、暴露度与敌人区域惩罚、时间约束
+- `live/midround/candidate_builder.py`：2–4 条候选、合法性校验、grounded facts
+- 单测：`test_state_card.py`、`test_route_graph.py`、`test_candidate_builder.py`，以及用真实雷达截图跑通的 `test_midround_integration.py`
+
+验收：`python -m unittest discover -s live/tests -t .` 共 64 项全部通过。
+
+### M2 状态（2026-10-23）
+
+已完成：
+
+- `live/midround/plan_cache.py`：状态指纹、2 秒新鲜期、4 秒上限、线程安全
+- `live/midround/agent.py`：快循环（状态卡 -> 候选 -> 模板计划）、热键路径只读缓存、过期后立即用模板重建
+- `live/midround/logging.py`：`record_type = "plan"` / `"plan_outcome"` 追加日志
+- `live/midround/hotkey.py`：可选 `pynput` 全局鼠标侧键，只监听不注入
+- `live/gsi_server.py`：新增 `GET /plan`、`POST /agent/hotkey`、`POST /agent/refresh`、`GET /agent/status`
+- 页面：250ms 轮询 `/plan`，大字号 call、3 秒后变灰、可选 TTS 与网页按钮
+
+验收：
+
+- 热键路径 p95 < 1ms（本机测量，远低于 100ms 目标）
+- 无 LLM 时模板计划可用，call ≤ 20 字
+- 91 项 live 测试全部通过
+
+下一步进入 M3：`llm_planner.py` + `validator.py`，LLM 只做选择与措辞，失败 100% 回退模板。
+
+### M3 状态（2026-10-23）
+
+已完成：
+
+- `live/midround/validator.py`：候选 id、20 字 call、30 字理由、grounded facts 子集、未知区域和禁用措辞校验
+- `live/midround/llm_planner.py`：
+  - 默认 Ollama `/api/chat`（`qwen3:8b`、`think:false`、`format:json`、`stream:false`）
+  - OpenAI 兼容后端（`/v1/chat/completions`，适配 LM Studio / vLLM / llama.cpp 等）
+  - 5 秒超时、非法 JSON 重试 1 次、连接失败直接回退
+- `live/midround/agent.py`：后台慢循环，热键路径不等待；状态变化则丢弃迟到的 LLM 结果
+- 服务端：`GET/POST /agent/config`，页面新增“模型接入”面板（后端/模型/地址/API Key，运行时生效）
+- 实测本地 `qwen3:8b`：冷启动约 28 秒（首次加载），预热后约 3 秒，5 秒超时下可正常返回
+
+验收：
+
+- LLM 失败 100% 保留模板计划
+- 校验失败、非法 JSON、超时均有记录（`/agent/status` 与 shadow log）
+- 热键路径 p95 仍远低于 100ms
+- 133 项 live 测试全部通过（LLM 测试使用 fake backend）
+
+下一步进入 M4：热键 + 页面显示已具备，补齐 plan_outcome 回填与真实对局 shadow 评估。
+
+### M4 状态（2026-10-23）
+
+已完成：
+
+- 热键触发后登记 pending outcome，在 +3 秒 / +5 秒分别回填
+  - `status = ok / died / round_changed / not_live`
+  - `adopted`：玩家所处区域是否等于计划目标区域
+  - `actual_action`：`HOLD` / `ROTATE_A/B/MID/CT` / `OTHER`
+- 同一 plan 重复按热键只记一次样本，队列上限 50
+- 每次 LLM 调用写 `record_type="plan_llm"`，记录成功/失败、校验原因、延迟、重试次数
+- `live/analyze_shadow.py` 新增计划报告：
+  - plan 来源分布、call 长度、LLM 延迟 p50/p95
+  - LLM 成功率、错误分布、校验分布
+  - 3 秒 / 5 秒采纳率，并按 `llm` / `template` 拆分
+- `/agent/status` 增加 pending、已记录、已采纳与采纳率
+
+验收：
+
+- 3 秒 / 5 秒两条 `plan_outcome` 均按预期写入
+- 死亡与换回合会正确关闭待回填记录
+- 157 项 live 测试全部通过（新增键盘热键、单屏 ticker 与 no_position 统计口径）
+
+下一步进入 M5：连续 5 局真实对局 shadow，人工抽检 20 条指令，统计采纳率、误指挥率，并对比 LLM 与内核首选。

@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "map": "de_dust2",
+  "side": "ct",
+  "notes": "Hand-maintained Dust2 CT topology. eta_s is a normal walking time; exposure is low/medium/high. Coordinates are Awpy world units from place_centroids.json.",
+  "targets": {
+    "A": "A_Site",
+    "B": "B_Site",
+    "Mid": "Mid",
+    "CT": "CTSpawn"
+  },
+  "nodes": {
+    "CTSpawn": {"callout": "警家", "area": "CT", "x": 258.2, "y": 2369.7},
+    "A_Site": {"callout": "A 包点", "area": "A", "x": 1094.8, "y": 2616.8},
+    "A_Short": {"callout": "A 小", "area": "A", "x": 360.9, "y": 1634.3},
+    "A_Long": {"callout": "A 大", "area": "A", "x": 1433.6, "y": 1546.4},
+    "A_Ramp": {"callout": "A 坡", "area": "A", "x": 1346.4, "y": 2487.1},
+    "Catwalk": {"callout": "猫道", "area": "A", "x": -104.8, "y": 1374.7},
+    "Pit": {"callout": "大坑", "area": "A", "x": 1402.6, "y": 562.7},
+    "Mid": {"callout": "中路", "area": "Mid", "x": -346.3, "y": 1345.3},
+    "TopMid": {"callout": "中路上", "area": "Mid", "x": -365.2, "y": 317.0},
+    "MidDoors": {"callout": "中门", "area": "Mid", "x": -450.4, "y": 2038.4},
+    "B_Site": {"callout": "B 包点", "area": "B", "x": -1723.8, "y": 2244.9},
+    "B_Doors": {"callout": "B 门", "area": "B", "x": -1127.9, "y": 2276.2},
+    "B_Tunnels": {"callout": "B 洞", "area": "B", "x": -1126.1, "y": 1129.5},
+    "OutsideTunnel": {"callout": "B 洞外", "area": "B", "x": -1583.2, "y": 399.2}
+  },
+  "edges": [
+    {"from": "CTSpawn", "to": "A_Ramp", "eta_s": 4.0, "exposure": "low"},
+    {"from": "CTSpawn", "to": "MidDoors", "eta_s": 2.0, "exposure": "low"},
+    {"from": "CTSpawn", "to": "B_Doors", "eta_s": 4.0, "exposure": "low"},
+    {"from": "A_Ramp", "to": "A_Site", "eta_s": 2.0, "exposure": "low"},
+    {"from": "A_Site", "to": "A_Short", "eta_s": 2.0, "exposure": "low"},
+    {"from": "A_Site", "to": "A_Long", "eta_s": 2.0, "exposure": "medium"},
+    {"from": "A_Short", "to": "Catwalk", "eta_s": 1.5, "exposure": "medium"},
+    {"from": "Catwalk", "to": "Mid", "eta_s": 2.5, "exposure": "medium"},
+    {"from": "Catwalk", "to": "MidDoors", "eta_s": 2.0, "exposure": "medium"},
+    {"from": "Mid", "to": "TopMid", "eta_s": 2.0, "exposure": "medium"},
+    {"from": "Mid", "to": "MidDoors", "eta_s": 2.0, "exposure": "high"},
+    {"from": "TopMid", "to": "A_Short", "eta_s": 3.0, "exposure": "high"},
+    {"from": "MidDoors", "to": "B_Doors", "eta_s": 2.5, "exposure": "medium"},
+    {"from": "MidDoors", "to": "B_Tunnels", "eta_s": 2.5, "exposure": "high"},
+    {"from": "B_Doors", "to": "B_Site", "eta_s": 2.0, "exposure": "low"},
+    {"from": "B_Tunnels", "to": "B_Site", "eta_s": 2.0, "exposure": "medium"},
+    {"from": "B_Tunnels", "to": "OutsideTunnel", "eta_s": 2.0, "exposure": "high"},
+    {"from": "A_Long", "to": "Pit", "eta_s": 2.0, "exposure": "medium"}
+  ]
+}
